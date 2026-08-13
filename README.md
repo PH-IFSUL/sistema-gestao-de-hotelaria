@@ -1,12 +1,22 @@
 # Sistema de getão de Hotelaria
 
-### Integrantes do grupo:
-Pedro S., Róger A., Guilherme Z., Guilherme G.
-
 ## Descriçao do projeto
 
-Sistema gestão hotelaria
+Sistema gestão simples de hotelaria, com controle dos quartos e reservas dos hóspedes, integrado com banco de dados.
 
-## Atribuição dos Membros do grupo:
+## Integrantes do grupo e user do github:
 
-A definir
+* Pedro Henrique dos Santos = PH-IFSUL
+* Róger André de Campos = RogerCampos97
+* Guilherme Guimarães Audibert = Guijermino
+* Guilherme Dallacort Zembruski = zembruski
+
+## Atribuição dos Membros:
+
+** podem mudar no decorrer do projeto
+
+* Projeto: Róger de Campos
+* Backend: Róger de Campos, Guilherme Zembruski e Guilherme Guimarães
+* Frontend: Róger de Campos e Guilherme Guimarães
+* Banco: Pedro Henrique
+* Testes: Pedro Henrique
