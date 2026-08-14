@@ -1,6 +1,6 @@
-# Sistema de getão de Hotelaria
+# Sistema de gestão de Hotelaria
 
-## Descriçao do projeto
+## Descrição do projeto
 
 Sistema gestão simples de hotelaria, com controle dos quartos e reservas dos hóspedes, integrado com banco de dados.
 
