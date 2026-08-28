@@ -20,3 +20,6 @@ Sistema gestão simples de hotelaria, com controle dos quartos e reservas dos h�
 * Frontend: Róger de Campos e Guilherme Guimarães
 * Banco: Pedro Henrique
 * Testes: Pedro Henrique
+
+# Diagrama de classes:
+link: [DIagrama](docs/Class_diagrams.md)
