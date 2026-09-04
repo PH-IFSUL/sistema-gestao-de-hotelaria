@@ -13,12 +13,14 @@ class Estado_Contexto:
         # usado para definir novo estado
         self._state = novo_estado
 
-    def get_nome(self):
-        return self._state.get_nome()
+    def iniciar(self, estadia):
+        self._state.iniciar(estadia)
 
     def finalizar(self):
         self._state.finalizar(self)
-
+        
+    def get_nome(self):
+            return self._state.get_nome()
 
 class State(ABC):
     @abstractmethod
@@ -39,7 +41,7 @@ class Reservada(State):
         estadia.__Estado_estadia.set_estado(Reservada())
         estadia.info_datas.reservar(estadia.info_datas.data_checkin_previsto, estadia.info_datas.data_checkout_previsto)
         estadia.info_datas.data_atualizado = datetime.datetime.now()
-        
+
     def finalizar(self, estadia):
         pass
 
@@ -50,12 +52,18 @@ class Em_estadia(State):
     def iniciar(self, estadia):
         pass
 
+    def finalizar(self, estadia):
+            pass
+    
     def get_nome(self):
         return "Em Estadia"
     
 class Chekout_realizado(State):
     def iniciar(self, estadia):
         pass
+
+    def finalizar(self, estadia):
+            pass
 
     def get_nome(self):
         return "Checkout Realizado"
