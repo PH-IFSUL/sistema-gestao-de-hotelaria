@@ -4,7 +4,7 @@
 
 Sistema de gestão hoteleira desenvolvida em Python, com controle dos quartos e reservas dos hóspedes, integrado com banco de dados.
 
-## Integrantes do grupo e user do github:
+## Integrantes do grupo, user do github e atribuições:
 
 | Nome | GitHub | Responsabilidade |
 |------|--------|------------------|
