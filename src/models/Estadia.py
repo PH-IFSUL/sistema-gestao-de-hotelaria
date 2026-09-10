@@ -19,8 +19,8 @@ class Estadia():
         self.__hospede: Hospede = hospede
         self.__quarto: Quarto = quarto
         self.__consumos: list[Consumos] = consumos
-        self.__info_datas: Info_data = info_data
-        self.__Estado_estadia = Estado_Contexto(estado)
+        self.__info_datas: Info_data = Info_data()
+        self.__Estado_estadia = Estado_Contexto()
 
     @property
     def id(self) -> int:
