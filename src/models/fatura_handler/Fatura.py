@@ -35,7 +35,7 @@ class Fatura():
     @property
     def get_quantidade(self) -> int:
         return self.__quantidade
-    S
+    
     @get_quantidade.setter
     def set_quantidade(self, valor: int) -> None:
         if not isinstance(valor, int):
