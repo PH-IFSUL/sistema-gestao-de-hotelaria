@@ -1,4 +1,4 @@
-from models.guest.Cliente import Cliente
+from models.guest.cliente import Cliente
 from models.guest.refactor_repo import ClienteRepositorio
 
 

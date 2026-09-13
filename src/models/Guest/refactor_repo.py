@@ -1,4 +1,4 @@
-from .Cliente import Cliente
+from .cliente import Cliente
 
 class ClienteRepositorio:
     def __init__(self):
