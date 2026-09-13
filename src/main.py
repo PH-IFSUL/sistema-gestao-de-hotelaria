@@ -1,7 +1,5 @@
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from models.model import ClienteRepositorio, QuartoRepositorio
+from models.guest.refactor_repo import ClienteRepositorio
+from models.room.refactor_repos import QuartoRepositorio
 from controllers.controller import ClienteController, QuartoController
 from views.view import JanelaPrincipal
 

@@ -1,10 +1,9 @@
-from .Tipos_quarto import TiposQuarto
-
 class Quarto:
+    TIPOS = ["Simples", "Duplo", "Suíte"]
 
     def __init__(self, numero: int, tipo: str, valor_diaria: float):
-        if tipo not in TiposQuarto:
-            raise ValueError(f"Tipo inválido. Escolha entre: {list(TiposQuarto)}")
+        if tipo not in self.TIPOS:
+            raise ValueError(f"Tipo inválido. Escolha entre: {self.TIPOS}")
         self._numero = numero
         self._tipo = tipo
         self._valor_diaria = valor_diaria

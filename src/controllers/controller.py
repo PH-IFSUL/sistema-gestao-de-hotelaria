@@ -1,14 +1,18 @@
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from src.models.model import Cliente, Quarto, ClienteRepositorio, QuartoRepositorio
+from models.room import Quarto
+from models.room.refactor_repos import QuartoRepositorio
+from models.guest.Cliente import Cliente
+from models.guest.refactor_repo import ClienteRepositorio
 
 
 class ClienteController:
     def __init__(self, repositorio: ClienteRepositorio):
         self._repo = repositorio
 
-    def cadastrar(self, nome: str, cpf: str, telefone: str, email: str) -> str:
+    def cadastrar(self, 
+                  nome: str,
+                  cpf: str,
+                  telefone: str,
+                  email: str) -> str:
         nome = nome.strip()
         cpf = cpf.strip()
         telefone = telefone.strip()
@@ -19,7 +23,8 @@ class ClienteController:
         if not cpf:
             raise ValueError("O campo CPF é obrigatório.")
         if len(cpf) != 11 or not cpf.isdigit():
-            raise ValueError("CPF deve conter exatamente 11 dígitos numéricos.")
+            raise ValueError("CPF deve conter exatamente 11 dígitos "
+                             "numéricos.")
         if not telefone:
             raise ValueError("O campo Telefone é obrigatório.")
 
@@ -41,7 +46,10 @@ class QuartoController:
     def __init__(self, repositorio: QuartoRepositorio):
         self._repo = repositorio
 
-    def cadastrar(self, numero_str: str, tipo: str, valor_str: str) -> str:
+    def cadastrar(self, 
+                  numero_str: str,
+                  tipo: str,
+                  valor_str: str) -> str:
         numero_str = numero_str.strip()
         valor_str = valor_str.strip().replace(",", ".")
 
@@ -57,7 +65,8 @@ class QuartoController:
         try:
             valor = float(valor_str)
         except ValueError:
-            raise ValueError("Valor da diária deve ser um número (ex: 150.00).")
+            raise ValueError("Valor da diária deve ser um número "
+                             "(ex: 150.00).")
 
         if valor <= 0:
             raise ValueError("Valor da diária deve ser maior que zero.")
@@ -74,5 +83,6 @@ class QuartoController:
         if not numero_str.isdigit():
             raise ValueError("Informe um número de quarto válido.")
         if not self._repo.remover(int(numero_str)):
-            raise ValueError(f"Nenhum quarto encontrado com número {numero_str}.")
+            raise ValueError(f"Nenhum quarto encontrado com número "
+                             f" {numero_str}.")
         return f"Quarto {numero_str} removido."

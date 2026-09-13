@@ -1,10 +1,7 @@
-import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import tkinter as tk
 from tkinter import ttk, messagebox
-from src.controllers.controller import ClienteController, QuartoController
-from src.models.model import Quarto
+from controllers.controller import ClienteController, QuartoController
+from models.room.Quarto import Quarto
 
 COR_FUNDO       = "#F5F4F0"
 COR_SURFACE     = "#FFFFFF"

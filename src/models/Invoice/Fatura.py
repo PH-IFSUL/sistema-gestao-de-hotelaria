@@ -1,8 +1,4 @@
-
-
-from models.fatura_handler.Produto import Produto
-
-
+#from models.fatura_handler.Produto import Produto
 class Fatura():
     def __init__(self, cod: int, estadia, produto, quantidade: int) -> None:
         self._id: int = cod
