@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from controllers.controller import ClienteController, QuartoController
-from models.room.Quarto import Quarto
+from controllers.quarto_controller import QuartoController
+from controllers.cliente_controller import ClienteController
+from models.room.quarto import Quarto
 
 COR_FUNDO       = "#F5F4F0"
 COR_SURFACE     = "#FFFFFF"

@@ -1,6 +1,7 @@
 from models.guest.refactor_repo import ClienteRepositorio
 from models.room.refactor_repos import QuartoRepositorio
-from controllers.controller import ClienteController, QuartoController
+from controllers.quarto_controller import QuartoController
+from controllers.cliente_controller import ClienteController
 from views.view import JanelaPrincipal
 
 

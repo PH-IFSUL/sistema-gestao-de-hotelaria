@@ -1,4 +1,4 @@
-from .Quarto import Quarto
+from .quarto import Quarto
 
 class QuartoRepositorio:
     def __init__(self):
