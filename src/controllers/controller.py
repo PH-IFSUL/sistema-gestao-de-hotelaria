@@ -1,4 +1,4 @@
-from models.room import Quarto
+from models.room.Quarto import Quarto
 from models.room.refactor_repos import QuartoRepositorio
 from models.guest.Cliente import Cliente
 from models.guest.refactor_repo import ClienteRepositorio
