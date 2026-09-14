@@ -1,9 +1,9 @@
 from models.guest.cliente import Cliente
-from models.guest.refactor_repo import ClienteRepositorio
+from models.database.interfaces.cliente_repository_interface import ClientRepository
 
 
 class ClienteController:
-    def __init__(self, repositorio: ClienteRepositorio):
+    def __init__(self, repositorio: ClientRepository):
         self._repo = repositorio
 
     def cadastrar(self, 
@@ -27,14 +27,15 @@ class ClienteController:
             raise ValueError("O campo Telefone é obrigatório.")
 
         cliente = Cliente(nome, cpf, telefone, email)
-        self._repo.adicionar(cliente)
+        self._repo.save(cliente)
         return f"Cliente '{nome}' cadastrado com sucesso."
 
     def listar(self) -> list[Cliente]:
-        return self._repo.listar()
+        return self._repo.get_all()
 
     def remover(self, cpf: str) -> str:
         cpf = cpf.strip()
-        if not self._repo.remover(cpf):
+        # @ fix -> converter para remover por id depois
+        if not self._repo.delete(cpf):
             raise ValueError(f"Nenhum cliente encontrado com CPF {cpf}.")
         return f"Cliente com CPF {cpf} removido."
