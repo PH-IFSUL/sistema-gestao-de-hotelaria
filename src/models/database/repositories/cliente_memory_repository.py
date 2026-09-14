@@ -1,6 +1,6 @@
 
 from typing import List, Optional
-from ...guest.cliente import Cliente
+from ...client.cliente import Cliente
 
 '''
     Classe temporaria para salvar o cliente na memória

@@ -1,4 +1,4 @@
-from models.guest.cliente import Cliente
+from models.client.cliente import Cliente
 from models.database.interfaces.cliente_repository_interface import ClientRepository
 
 

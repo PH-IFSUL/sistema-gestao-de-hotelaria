@@ -1,5 +1,5 @@
 from models.database.repositories.cliente_memory_repository import InMemoryCliente
-from models.room.refactor_repos import QuartoRepositorio
+from models.database.repositories.room_memory_repository import InMemoryRoomRepository
 from controllers.quarto_controller import QuartoController
 from controllers.cliente_controller import ClienteController
 from views.view import JanelaPrincipal
@@ -7,7 +7,7 @@ from views.view import JanelaPrincipal
 
 def main():
     repo_clientes = InMemoryCliente()
-    repo_quartos  = QuartoRepositorio()
+    repo_quartos  = InMemoryRoomRepository()
 
     ctrl_clientes = ClienteController(repo_clientes)
     ctrl_quartos  = QuartoController(repo_quartos)

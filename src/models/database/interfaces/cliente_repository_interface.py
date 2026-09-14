@@ -4,7 +4,7 @@
         -> todas as implementações tem que ter os mesmos métodos
 '''
 from typing import Protocol, List, Optional
-from ...guest.cliente import Cliente
+from ...client.cliente import Cliente
 
 
 class ClientRepository(Protocol):
@@ -24,8 +24,12 @@ class ClientRepository(Protocol):
 
     def find_by_Cpf(self, cpf_query: str) -> Optional[Cliente]:
         ...
-    """ 
+        
+    '''
     def update(self, guest: Cliente) -> bool:
-        ... """
+        ... 
+    
+    '''
+    
 
     
