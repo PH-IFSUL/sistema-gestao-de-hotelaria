@@ -8,7 +8,6 @@ class Quarto:
         self._numero = numero
         self._tipo = tipo
         self._valor_diaria = valor_diaria
-        self._disponivel = True
         self.estado = State_context()
 
     def get_numero(self) -> int:
@@ -20,15 +19,6 @@ class Quarto:
     def get_valor_diaria(self) -> float:
         return self._valor_diaria
 
-    def is_disponivel(self) -> bool:
-        return self._disponivel
-
-    def bloquear(self):
-        self._disponivel = False
-
-    def liberar(self):
-        self._disponivel = True
-
     def __str__(self):
-        status = f" {self.estado.get_current}"
+        status = f" {self.estado.get_current()}"
         return f"Quarto {self._numero} | {self._tipo} | R$ {self._valor_diaria:.2f} | {status}"

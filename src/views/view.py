@@ -3,19 +3,57 @@ from tkinter import ttk, messagebox
 from controllers.quarto_controller import QuartoController
 from controllers.cliente_controller import ClienteController
 from models.room.room import Quarto
+from typing import NamedTuple
+from .style_helper import Estilo
 
-COR_FUNDO       = "#F5F4F0"
-COR_SURFACE     = "#FFFFFF"
-COR_ACCENT      = "#2C5F8A"
-COR_ACCENT_DARK = "#1E4266"
-COR_TEXTO       = "#1A1714"
-COR_TEXTO_SOFT  = "#6A6460"
-COR_BORDA       = "#DDDAD4"
-COR_ERRO        = "#8A2020"
-COR_SUCESSO     = "#2A6644"
-FONTE_LABEL     = ("Segoe UI", 10)
-FONTE_LABEL_SM  = ("Segoe UI", 9)
-FONTE_BOTAO     = ("Segoe UI", 10, "bold")
+class ThemeColors(NamedTuple):
+    COR_FUNDO: str
+    COR_SURFACE: str
+    COR_ACCENT: str
+    COR_ACCENT_DARK: str
+    COR_TEXTO: str
+    COR_TEXTO_SOFT: str
+    COR_BORDA: str
+    COR_ERRO: str
+    COR_SUCESSO: str
+
+class ThemeFonts(NamedTuple):
+    FONTE_LABEL: tuple[str, int]
+    FONTE_LABEL_SM: tuple[str, int]
+    FONTE_BOTAO: tuple[str, int, str]
+
+style_helper = Estilo()
+
+theme_colors = ThemeColors(
+    COR_FUNDO=style_helper.get_color("COR_FUNDO"),
+    COR_SURFACE=style_helper.get_color("COR_SURFACE"),
+    COR_ACCENT=style_helper.get_color("COR_ACCENT"),
+    COR_ACCENT_DARK=style_helper.get_color("COR_ACCENT_DARK"),
+    COR_TEXTO=style_helper.get_color("COR_TEXTO"),
+    COR_TEXTO_SOFT=style_helper.get_color("COR_TEXTO_SOFT"),
+    COR_BORDA=style_helper.get_color("COR_BORDA"),
+    COR_ERRO=style_helper.get_color("COR_ERRO"),
+    COR_SUCESSO=style_helper.get_color("COR_SUCESSO")
+)
+
+theme_fonts = ThemeFonts(
+    FONTE_LABEL=style_helper.get_font("FONTE_LABEL"),
+    FONTE_LABEL_SM=style_helper.get_font("FONTE_LABEL_SM"),
+    FONTE_BOTAO= style_helper.get_font("FONTE_BOTAO")
+)
+
+COR_FUNDO       = theme_colors.COR_FUNDO
+COR_SURFACE     = theme_colors.COR_SURFACE
+COR_ACCENT      = theme_colors.COR_ACCENT
+COR_ACCENT_DARK = theme_colors.COR_ACCENT_DARK
+COR_TEXTO       = theme_colors.COR_TEXTO
+COR_TEXTO_SOFT  = theme_colors.COR_TEXTO_SOFT
+COR_BORDA       = theme_colors.COR_BORDA
+COR_ERRO        = theme_colors.COR_ERRO
+COR_SUCESSO     = theme_colors.COR_SUCESSO
+FONTE_LABEL     = theme_fonts.FONTE_LABEL
+FONTE_LABEL_SM  = theme_fonts.FONTE_LABEL_SM
+FONTE_BOTAO     = theme_fonts.FONTE_BOTAO
 
 
 def _configurar_estilo():
@@ -206,8 +244,6 @@ class AbaQuartos(tk.Frame):
             self._tree.heading(c, text=cabecalhos[c])
             self._tree.column(c, width=larguras[c], anchor="w")
 
-        # @fix-> colocar cores para cada tipo de estado
-        # para poder mudar cores de fundo da lista conforme estado mudar aqui
         self._tree.tag_configure("ocupado", foreground="#8A2020", background="#FAEAEA")
         self._tree.pack(fill="both", expand=True)
 
@@ -235,14 +271,10 @@ class AbaQuartos(tk.Frame):
             self._msg_form.config(text=str(e), fg=COR_ERRO)
 
     def _atualizar_lista(self):
-        '''
-            Atualizar lista dos quartos com cores
-        '''
         self._tree.delete(*self._tree.get_children())
         for q in self._ctrl.listar():
-            status = self._ctrl.get_state_name(q)
-            # @fix-> colocar cores para cada tipo de estado usar get_state_tag do controler
-            tag    = () if q.is_disponivel() else ("ocupado",)
+            status = q.estado.get_current()
+            tag    = () if status == "Disponível" else ("ocupado",)
             self._tree.insert("", "end",
                               values=(q.get_numero(), q.get_tipo(),
                                       f"R$ {q.get_valor_diaria():.2f}", status),
