@@ -1,3 +1,4 @@
+from .room_state import State_context
 class Quarto:
     TIPOS = ["Simples", "Duplo", "Suíte"]
 
@@ -8,6 +9,7 @@ class Quarto:
         self._tipo = tipo
         self._valor_diaria = valor_diaria
         self._disponivel = True
+        self.estado = State_context()
 
     def get_numero(self) -> int:
         return self._numero
@@ -28,5 +30,5 @@ class Quarto:
         self._disponivel = True
 
     def __str__(self):
-        status = "Disponível" if self._disponivel else "Ocupado"
+        status = f" {self.estado.get_current}"
         return f"Quarto {self._numero} | {self._tipo} | R$ {self._valor_diaria:.2f} | {status}"

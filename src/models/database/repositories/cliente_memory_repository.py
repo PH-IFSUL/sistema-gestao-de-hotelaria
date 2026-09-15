@@ -6,7 +6,7 @@ from ...client.cliente import Cliente
     Classe temporaria para salvar o cliente na memória
 
 '''
-class InMemoryCliente:
+class InMemoryClienteRepository:
 
     def __init__(self):
         self._clientes: list[Cliente] = []

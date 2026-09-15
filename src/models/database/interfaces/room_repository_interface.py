@@ -4,7 +4,7 @@
         -> todas as implementações tem que ter os mesmos métodos
 '''
 from typing import Protocol, List, Optional
-from models.room.quarto import Quarto
+from models.room.room import Quarto
 
 class RoomRepository(Protocol):
 

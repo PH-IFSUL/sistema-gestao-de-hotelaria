@@ -63,7 +63,7 @@ class Chekout_realizado(State):
         pass
 
     def finalizar(self, estadia):
-            pass
+        pass
 
     def get_nome(self):
         return "Checkout Realizado"

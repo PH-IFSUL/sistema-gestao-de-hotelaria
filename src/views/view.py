@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from controllers.quarto_controller import QuartoController
 from controllers.cliente_controller import ClienteController
-from models.room.quarto import Quarto
+from models.room.room import Quarto
 
 COR_FUNDO       = "#F5F4F0"
 COR_SURFACE     = "#FFFFFF"
@@ -206,6 +206,8 @@ class AbaQuartos(tk.Frame):
             self._tree.heading(c, text=cabecalhos[c])
             self._tree.column(c, width=larguras[c], anchor="w")
 
+        # @fix-> colocar cores para cada tipo de estado
+        # para poder mudar cores de fundo da lista conforme estado mudar aqui
         self._tree.tag_configure("ocupado", foreground="#8A2020", background="#FAEAEA")
         self._tree.pack(fill="both", expand=True)
 
@@ -233,9 +235,13 @@ class AbaQuartos(tk.Frame):
             self._msg_form.config(text=str(e), fg=COR_ERRO)
 
     def _atualizar_lista(self):
+        '''
+            Atualizar lista dos quartos com cores
+        '''
         self._tree.delete(*self._tree.get_children())
         for q in self._ctrl.listar():
-            status = "Disponível" if q.is_disponivel() else "Ocupado"
+            status = self._ctrl.get_state_name(q)
+            # @fix-> colocar cores para cada tipo de estado usar get_state_tag do controler
             tag    = () if q.is_disponivel() else ("ocupado",)
             self._tree.insert("", "end",
                               values=(q.get_numero(), q.get_tipo(),

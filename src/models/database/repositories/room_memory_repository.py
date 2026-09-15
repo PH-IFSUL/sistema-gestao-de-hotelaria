@@ -1,6 +1,6 @@
 
 from typing import List, Optional
-from models.room.quarto import Quarto
+from models.room.room import Quarto
 
 class InMemoryRoomRepository:
     def __init__(self):

@@ -1,4 +1,4 @@
-from models.room.quarto import Quarto
+from models.room.room import Quarto
 from models.database.interfaces.room_repository_interface import RoomRepository
 
 class QuartoController:
@@ -45,3 +45,9 @@ class QuartoController:
             raise ValueError(f"Nenhum quarto encontrado com número "
                              f" {numero_str}.")
         return f"Quarto {numero_str} removido."
+
+    def get_state_name(self, room: Quarto):
+        return room.estado.get_current()
+    
+    def get_state_tag(self, room: Quarto):
+        return room.estado.__str__()
