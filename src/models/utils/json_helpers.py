@@ -1,17 +1,17 @@
-import json
+import json, os
 from pathlib import Path
 from typing import Any
 
 class JSONHelper:
 
-    @staticmethod
+    """ @staticmethod
     def save_to_json(data: Any, file_path: str) -> None:
-        """
+        
         Save data to a JSON file.
 
         :param data: Data to be saved (dict or list).
         :param file_path: Path to the JSON file.
-        """
+       
         # testa se a pasta existe, se não existir cria a pasta
         Path(file_path).parent.mkdir(parents=True, exist_ok=True)
 
@@ -26,17 +26,18 @@ class JSONHelper:
         # Save the updated data
         with open(file_path, "w", encoding="utf-8") as file:
             json.dump(existing_data, file, indent=4, ensure_ascii=False)
-
+ """
     @staticmethod
     def load_from_json(file_path: str) -> Any:
         """
         Load data from a JSON file.
 
         :param file_path: Path to the JSON file.
-        :return: Data loaded from the JSON file (dict or list).
+        :return: Data loaded from the JSON file (dict or list), None if empty.
         """
-        try:
+        if os.path.exists(file_path) and os.path.getsize(file_path) != 0:
             with open(file_path, "r", encoding="utf-8") as file:
                 return json.load(file)
-        except FileNotFoundError:
+        else:
             return None
+    
