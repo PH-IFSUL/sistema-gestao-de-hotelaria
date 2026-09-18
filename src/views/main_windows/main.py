@@ -2,8 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from controllers.cliente_controller import ClienteController
 from controllers.quarto_controller import QuartoController
-from views.view import AbaClientes
-from views.view import AbaQuartos
+from views.clients_tab.main import AbaClientes
+from views.rooms_tab.main import AbaQuartos
 from views.style.constants import TmColors, TmFonts
 
 def _configurar_estilo():
