@@ -1,4 +1,3 @@
-
 from abc import ABC, abstractmethod
 
 class State_context:

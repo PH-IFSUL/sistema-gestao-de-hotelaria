@@ -19,7 +19,7 @@ class Estado_Contexto:
     def finalizar(self):
         self._state.finalizar(self)
         
-    def get_nome(self):
+    def get_nome(self) -> str:
             return self._state.get_nome()
 
 class State(ABC):

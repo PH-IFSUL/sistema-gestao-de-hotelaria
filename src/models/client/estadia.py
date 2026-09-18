@@ -1,64 +1,91 @@
 # imports externos:
 from datetime import datetime, date
 # imports locais:
-from Estado_estadia import Estado_Contexto
-from src.models.Info_datas import Info_data
-from src.models.Quarto import Quarto
-from src.models.Hospede import Hospede
-from src.models.Consumos import Consumos
+from .state_estadia import Estado_Contexto
+from ..room.room import Quarto
+from ..client.cliente import Cliente
+from ..product.produto import Produto
 
 
 class Estadia():
-    def __init__(self, cod: int, hospede: Hospede, quarto: Quarto,
-                 consumos: list[Consumos], estado: Estado_Contexto, info_data: Info_data) -> None:
+    '''Classe para salvar a estadia do Cliente no Hotel'''
+    def __init__(self, cod: int, hospede: Cliente, quarto: Quarto,
+                 consumos: list[Produto], data_prevista_checkin: date, data_prevista_checkout: date, data_entrada: datetime, data_saida: datetime) -> None:
         
         self._id: int = cod
-        self.__hospede: Hospede = hospede
+        self.__hospede: Cliente = hospede
         self.__quarto: Quarto = quarto
-        self.__consumos: list[Consumos] = consumos
-        self.__info_datas: Info_data = Info_data()
+        self.__consumos: list[Produto] = consumos
         self.__Estado_estadia = Estado_Contexto()
+        self.__data_prevista_checkin = data_prevista_checkin # data prevista para o cliente chegar
+        self.__data_prevista_checkout = data_prevista_checkout # data prevista para o cliente sair
+        self.__data_entrada = data_entrada # datetime do checkin efetivo
+        self.__data_saida = data_saida # datetime do chekout efetivo
 
     @property
-    def id(self) -> int:
+    def get_id(self) -> int:
         return self._id
     
-    @id.setter
-    def id(self, valor: int) -> None:
-        if not isinstance(valor, int):
-            raise TypeError("id deve ser numero")
-        if valor is None:
-            raise ValueError("id não pode ser vazio")
-        self._id = valor
+    @property
+    def get_estado(self) -> str:
+        return self.__Estado_estadia.get_nome()
 
     @property
-    def hospede(self):
+    def get_hospede(self) -> Cliente:
         return self.__hospede
 
-    @hospede.setter
+    @property
+    def get_quarto(self) -> Quarto:
+        return self.__quarto
+
+    @property
+    def get_consumos(self) -> list[Produto]:
+        return self.__consumos
+
+    @property
+    def get_data_prevista_checkin(self) -> date :
+        return self.__data_prevista_checkin
+
+    @property
+    def get_data_prevista_checkout(self) -> date :
+        return self.__data_prevista_checkout
+
+    @property
+    def get_data_entrada(self) -> datetime:
+        return self.__data_entrada
+
+    @property
+    def get_data_saida(self) -> datetime:
+        return self.__data_saida
+    
+    @get_id.setter
+    def id(self, new_id: int) -> None:
+        self._id = new_id
+
+    @get_hospede.setter
     def hospede(self, hospede) -> None:
         self.__hospede = hospede
 
-    @property
-    def quarto(self):
-        return self.__quarto
-
-    @quarto.setter
+    @get_quarto.setter
     def quarto(self, quarto) -> None:
         self.__quarto = quarto
 
-    @property
-    def consumos(self):
-        return self.__consumos
+    @get_consumos.setter
+    def consumos(self, consumo) -> None:
+        self.__consumos = __consumos
 
-    @consumos.setter
-    def consumos(self, consumos) -> None:
-        self.__consumos = consumos
+    @get_data_prevista_checkin.setter
+    def data_prevista_checkin(self, data: date) ->None:
+        self.__data_prevista_checkin = data    
+    
+    @get_data_prevista_checkout.setter
+    def data_prevista_checkout(self, data: date) ->None:
+        self.__data_prevista_checkout = data
 
-    @property
-    def info_datas(self):
-        return self.__info_datas
+    @get_data_entrada.setter
+    def data_entrada(self, now: datetime) -> None:
+        self.__data_entrada = now
 
-    @info_datas.setter
-    def info_datas(self, info_datas) -> None:
-        self.__info_datas = info_datas
+    @get_data_saida.setter
+    def get_data_saida(self, now: datetime) -> None:
+        self.__data_saida = now
