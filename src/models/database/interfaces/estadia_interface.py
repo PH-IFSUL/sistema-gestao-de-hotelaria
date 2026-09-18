@@ -1,10 +1,17 @@
+from __future__ import annotations
 from typing import Protocol, List, Optional
 from ...client.estadia import Estadia
 from ...product.produto import Produto
+from datetime import date
+
+def get_next_id(repo: EstadiaRepository) -> int:
+    return repo.get_next_id()
+
 
 class EstadiaRepository(Protocol):
 
-    def get_next_id(self) -> int:
+    @staticmethod
+    def get_next_id() -> int:
         ...
 
     def save(self, estadia: Estadia) -> None:
@@ -24,15 +31,7 @@ class EstadiaRepository(Protocol):
 
     def find_by_Cpf(self, cpf_query: str) -> Optional[Estadia]:
         ...
-
-    def get_chekin_date(self, guest: Cliente) -> bool:
-        ... 
-    
-    def update_chekin_date(self, guest: Cliente) -> bool:
+ 
+    def get_date_reservations(self, date: date) -> list[Estadia]:
         ... 
 
-    def get_chekout_date(self, guest: Cliente) -> bool:
-        ... 
-
-    def update_chekout_date(self, guest: Cliente) -> bool:
-            ... 

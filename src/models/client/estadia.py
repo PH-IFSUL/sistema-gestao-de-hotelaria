@@ -1,18 +1,20 @@
 # imports externos:
+from __future__ import annotations
 from datetime import datetime, date
 # imports locais:
 from .state_estadia import Estado_Contexto
 from ..room.room import Quarto
 from ..client.cliente import Cliente
 from ..product.produto import Produto
+from ..database.interfaces.estadia_interface import get_next_id, EstadiaRepository
 
 
 class Estadia():
     '''Classe para salvar a estadia do Cliente no Hotel'''
-    def __init__(self, cod: int, hospede: Cliente, quarto: Quarto,
+    def __init__(self, hospede: Cliente, quarto: Quarto,
                  consumos: list[Produto], data_prevista_checkin: date, data_prevista_checkout: date, data_entrada: datetime, data_saida: datetime) -> None:
         
-        self._id: int = cod
+        self._id: int = get_next_id(EstadiaRepository)
         self.__hospede: Cliente = hospede
         self.__quarto: Quarto = quarto
         self.__consumos: list[Produto] = consumos
