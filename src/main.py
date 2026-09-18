@@ -2,7 +2,7 @@ from models.database.repositories.cliente_memory_repository import InMemoryClien
 from models.database.repositories.room_memory_repository import InMemoryRoomRepository
 from controllers.quarto_controller import QuartoController
 from controllers.cliente_controller import ClienteController
-from views.view import JanelaPrincipal
+from views.main_windows.main import JanelaPrincipal
 
 
 def main():
