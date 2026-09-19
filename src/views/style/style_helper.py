@@ -2,7 +2,7 @@ import pathlib
 from typing import Any
 from models.utils.json_helpers import JSONHelper
 
-class Estilo:
+class _Style_Helper:
     '''Classe para gerenciar o estilo da aplicação, incluindo cores e fontes.'''
     def __init__(self):
         self.style_dict = self.get_dict_from_json()
@@ -10,7 +10,7 @@ class Estilo:
     def __new__(cls):
         '''Implementação do padrão Singleton para garantir que apenas uma instância da classe Estilo seja criada.'''
         if not hasattr(cls, 'instance'):
-            cls.instance = super(Estilo, cls).__new__(cls)
+            cls.instance = super(_Style_Helper, cls).__new__(cls)
         return cls.instance
 
     def get_dict_from_json(self):
@@ -34,6 +34,7 @@ class Estilo:
             if isinstance(fonte, (list, tuple)):
                 return tuple(fonte)
         return default
-
+    
+Style_Helper = _Style_Helper()
 
 
