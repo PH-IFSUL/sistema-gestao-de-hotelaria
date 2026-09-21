@@ -1,12 +1,20 @@
 # imports externos:
 from __future__ import annotations
 from datetime import datetime, date
+from dataclasses import dataclass
 # imports locais:
 from .state_estadia import Estado_Contexto
 from ..room.room import Quarto
 from ..client.cliente import Cliente
 from ..product.produto import Produto
-from ..database.interfaces.estadia_interface import get_next_id, EstadiaRepository
+# from ..database.interfaces.estadia_interface import get_next_id, EstadiaRepository
+
+
+
+@dataclass
+class reserva:
+    _id: int| None = None
+
 
 
 class Estadia():
@@ -14,7 +22,7 @@ class Estadia():
     def __init__(self, hospede: Cliente, quarto: Quarto,
                  consumos: list[Produto], data_prevista_checkin: date, data_prevista_checkout: date, data_entrada: datetime, data_saida: datetime) -> None:
         
-        self._id: int = get_next_id(EstadiaRepository)
+        self._id: int | None = None
         self.__hospede: Cliente = hospede
         self.__quarto: Quarto = quarto
         self.__consumos: list[Produto] = consumos
@@ -25,7 +33,7 @@ class Estadia():
         self.__data_saida = data_saida # datetime do chekout efetivo
 
     @property
-    def get_id(self) -> int:
+    def get_id(self) -> int | None:
         return self._id
     
     @property
