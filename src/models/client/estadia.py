@@ -12,23 +12,17 @@ from ..product.produto import Produto
 # from ..database.interfaces.estadia_interface import get_next_id, EstadiaRepository
 
 
-class Builder(ABC):
+class BuilderEstadia(ABC):
     '''Builder abstrato'''
     @property
     @abstractmethod
     def build(self) -> Estadia:
         ...
     @abstractmethod
-    def basic_info(self, hospede) -> Any:
-        ...
-    @abstractmethod
-    def checkin(self, data) -> Any:
-        ...
-    @abstractmethod
-    def checkout(self, data) -> Any:
+    def add_cliente(self, hospede: Cliente) -> Any:
         ...
 
-class Reserva(Builder):
+class Reserva(BuilderEstadia):
     '''Builder concreto da reserva'''
     def __init__(self) -> None:
         self.reset()
@@ -42,20 +36,19 @@ class Reserva(Builder):
         self.reset()
         return reserva
     
-    def basic_info(self, hospede):
-        self.__hospede: Cliente = hospede
-        self.__Estado_estadia = Estado_Contexto()
+    def add_cliente(self, hospede):
+        self._reserva.add(hospede)
         return self
 
-    def checkin(self, data: date):
-        self.__data_prevista_checkin = data # data prevista para o cliente chegar
+    def checkin(self, data_prevista: date):
+        self._reserva.add(data_prevista) # data prevista para o cliente chegar
         return self
 
-    def checkout(self, data: date):
-        self.__data_prevista_checkout = data # data prevista para o cliente sair
+    def checkout(self, data_prevista: date):
+        self.__data_prevista_checkout = data_prevista # data prevista para o cliente sair
         return self
 
-class Hospedagem(Builder):
+class Hospedagem(BuilderEstadia):
     '''Builder concreto da hospedagem'''
     def __init__(self) -> None:
         self.reset()
@@ -69,62 +62,40 @@ class Hospedagem(Builder):
         self.reset()
         return hospedagem
     
-    def basic_info(self, hospede):
-        self.__hospede: Cliente = hospede
-        self.__Estado_estadia = Estado_Contexto()
+    def add_cliente(self, hospede: Cliente):
+        self._hospedagem._hospede = hospede
         return self
 
-    def checkin(self, data: date):
-        self.__data_checkin = data # data real do checkin
+    def checkin(self):
+        self.__data_checkin = datetime.now() # data real do checkin
         return self
         
-    def checkout(self, data: date):
-        self.__data_checkout = data # data real checkout
+    def checkout(self):
+        self.__data_checkout = datetime.now() # data real checkout
         return self
 
-class Estadia():
-    def __init__(self) -> None:
-            self.parts = []
-
-    def list_Dados(self) -> None:
-        print(f"Dados: {', '.join(self.parts)}", end=".")
-
-
-@dataclass
-class reserva:
-    _id: int| None = None
-
-    
-""" 
 
 # https://www.freecodecamp.org/news/how-to-use-the-builder-pattern-in-python-a-practical-guide-for-devs/
 
 class Estadia():
     '''Classe para salvar a estadia do Cliente no Hotel'''
-    def __init__(self, hospede: Cliente, quarto: Quarto,
-                 consumos: list[Produto], data_prevista_checkin: date, data_prevista_checkout: date, data_entrada: datetime, data_saida: datetime) -> None:
-        
-        self._id: int | None = None
-        self.__hospede: Cliente = hospede
-        self.__quarto: Quarto = quarto
-        self.__consumos: list[Produto] = consumos
-        self.__Estado_estadia = Estado_Contexto()
-        self.__data_prevista_checkin = data_prevista_checkin # data prevista para o cliente chegar
-        self.__data_prevista_checkout = data_prevista_checkout # data prevista para o cliente sair
-        self.__data_entrada = data_entrada # datetime do checkin efetivo
-        self.__data_saida = data_saida # datetime do chekout efetivo
+    def __init__(self) -> None:
+        self._id = None
+        self._hospede: Cliente | None = None
+        self._quarto = None
+        self._consumos: list[Produto] = []
+        self._data_prevista_checkin = None # data prevista para o cliente chegar
+        self._data_prevista_checkout = None # data prevista para o cliente sair
+        self._data_entrada = None # datetime do checkin efetivo
+        self._data_saida = None # datetime do chekout efetivo
 
     @property
     def get_id(self) -> int | None:
         return self._id
-    
-    @property
-    def get_estado(self) -> str:
-        return self.__Estado_estadia.get_nome()
 
     @property
-    def get_hospede(self) -> Cliente:
-        return self.__hospede
+    def hospede(self) -> Cliente | None:
+        return self._hospede
 
     @property
     def get_quarto(self) -> Quarto:
@@ -132,31 +103,31 @@ class Estadia():
 
     @property
     def get_consumos(self) -> list[Produto]:
-        return self.__consumos
+        return self._consumos
 
     @property
     def get_data_prevista_checkin(self) -> date :
-        return self.__data_prevista_checkin
+        return self._data_prevista_checkin
 
     @property
     def get_data_prevista_checkout(self) -> date :
-        return self.__data_prevista_checkout
+        return self._data_prevista_checkout
 
     @property
     def get_data_entrada(self) -> datetime:
-        return self.__data_entrada
+        return self._data_entrada
 
     @property
     def get_data_saida(self) -> datetime:
-        return self.__data_saida
+        return self._data_saida
     
     @get_id.setter
     def id(self, new_id: int) -> None:
         self._id = new_id
 
-    @get_hospede.setter
-    def hospede(self, hospede) -> None:
-        self.__hospede = hospede
+    @hospede.setter
+    def hospede(self, hospede: Cliente) -> None:
+        self._hospede = hospede
 
     @get_quarto.setter
     def quarto(self, quarto) -> None:
@@ -164,7 +135,7 @@ class Estadia():
 
     @get_consumos.setter
     def consumos(self, consumo) -> None:
-        self.__consumos = __consumos
+        self._consumos = _consumos
 
     @get_data_prevista_checkin.setter
     def data_prevista_checkin(self, data: date) ->None:
@@ -180,4 +151,4 @@ class Estadia():
 
     @get_data_saida.setter
     def get_data_saida(self, now: datetime) -> None:
-        self.__data_saida = now """
+        self.__data_saida = now 
