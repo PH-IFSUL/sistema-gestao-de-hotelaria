@@ -2,58 +2,140 @@
 
 ```mermaid
 classDiagram
-    class atendente {
-        +int id
-        -string nome
-        -string cpf
-        +cadastrar_atendente(nome, cpf, telefone)
-        -modificar_acesso(id)
+    direction TB
+ 
+    class Funcionario {
+        <<abstract>>
+        #id : int
+        #nome : String
+        #cpf : String
+        #login : String
+        #senha : String
+        +autenticar(senha String) boolean
+        +getCargo() String*
+        +getNome() String
     }
-
-    class hospede {
-        +int id
-        -string nome
-        -string cpf
-        -string telefone
-        +cadastrar(nome, cpf, telefone)
-        -editar_cadastro(id)
+ 
+    class Recepcionista {
+        +getCargo() String
+        +realizarCheckin(reserva Reserva) void
     }
-
-    class quarto {
-        +int id
-        -int andar
-        -int quantidade_camas
-        -bool ar_condicionado
-        -bool ocupado
-
-        +cadastrar()
-        -consultar_disponibilidade(id)
+ 
+    class Gerente {
+        +getCargo() String
+        +gerarRelatorio() String
     }
-
-    class reserva {
-        +int id
-        -datetime data_cadastro
-        -datetime data_reservada
-        -datetime data_entrada
-        -datetime data_saida
-        -hospede responsavel
-        -List[hospede] hospedes_adicionais
-        -List[produtos] consumos
-        +criar_reserva(hospede)
-        -consultar_reserva(hospede)
-        -realizar_checkin(hospede)
-        -realizar_checkout(hospede)
+ 
+    class Cliente {
+        -id : int
+        -nome : String
+        -cpf : String
+        -telefone : String
+        -email : String
+        -endereco : String
+        +getNome() String
+        +getCpf() String
+        +toString() String
     }
-
-    class produtos{
-        +int id
-        +string descricao
+ 
+    class TipoQuarto {
+        -id : int
+        -descricao : String
+        -valorDiaria : double
+        -capacidade : int
+        +getDescricao() String
+        +getValorDiaria() double
     }
-    
-    atendente ..> reserva
-    hospede ..> reserva
-    quarto ..> reserva
-    reserva <.. produtos
+ 
+    class Quarto {
+        -numero : int
+        -andar : int
+        -tipo : TipoQuarto
+        -disponivel : boolean
+        +isDisponivel() boolean
+        +bloquear() void
+        +liberar() void
+        +getValorDiaria() double
+        +getNumero() int
+    }
+ 
+    class Reserva {
+        -id : int
+        -cliente : Cliente
+        -quarto : Quarto
+        -dataEntrada : LocalDate
+        -dataSaida : LocalDate
+        -status : StatusReserva
+        +confirmar() void
+        +cancelar() void
+        +getNumeroDiarias() int
+        +getStatus() StatusReserva
+        +getCliente() Cliente
+        +getQuarto() Quarto
+    }
+ 
+    class Hospedagem {
+        -id : int
+        -reserva : Reserva
+        -funcionario : Funcionario
+        -dataCheckin : LocalDateTime
+        -dataCheckout : LocalDateTime
+        -servicos : List
+        -ativa : boolean
+        +adicionarServico(s ServicoExtra) void
+        +calcularTotal() double
+        +encerrar() void
+        +isAtiva() boolean
+        +getDiarias() int
+    }
+ 
+    class ServicoExtra {
+        -descricao : String
+        -valor : double
+        -dataRegistro : LocalDate
+        +getValor() double
+        +getDescricao() String
+    }
+ 
+    class Pagamento {
+        -id : int
+        -hospedagem : Hospedagem
+        -valor : double
+        -formaPagamento : FormaPagamento
+        -dataPagamento : LocalDateTime
+        -pago : boolean
+        +confirmarPagamento() void
+        +getValor() double
+        +isPago() boolean
+    }
+ 
+    class StatusReserva {
+        <<enumeration>>
+        PENDENTE
+        CONFIRMADA
+        CANCELADA
+        CONCLUIDA
+    }
+ 
+    class FormaPagamento {
+        <<enumeration>>
+        DINHEIRO
+        CARTAO_CREDITO
+        CARTAO_DEBITO
+        PIX
+    }
+ 
+    Funcionario <|-- Recepcionista : herda
+    Funcionario <|-- Gerente : herda
+    Cliente "1" --o "0..*" Reserva : realiza
+    Quarto "1" --o "0..*" Reserva : reservado em
+    TipoQuarto "1" --* "1..*" Quarto : classifica
+    Reserva "1" --o "1" Hospedagem : origina
+    Funcionario "1" --o "0..*" Hospedagem : registra
+    Hospedagem "1" *-- "0..*" ServicoExtra : contém
+    Hospedagem "1" --o "1" Pagamento : gera
+    Reserva ..> StatusReserva : usa
+    Pagamento ..> FormaPagamento : usa
 
 
 ```
