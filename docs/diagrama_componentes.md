@@ -1,6 +1,4 @@
-# Diagrama de Componentes UML
-
-O diagrama abaixo representa a estrutura de componentes da arquitetura em camadas, mostrando como cada parte do sistema se comunica.
+# Diagrama de Componentes:
 
 ```mermaid
 graph TD
@@ -70,7 +68,3 @@ graph TD
     HDAO --> DB
     PDAO --> DB
 ```
-
-## Como os componentes se comunicam
-
-O usuário interage apenas com a **camada de apresentação**. Esta delega para os **serviços**, que coordenam as classes de **domínio** e acionam os **DAOs** para persistência. O banco de dados é acessado exclusivamente pela camada de persistência.
