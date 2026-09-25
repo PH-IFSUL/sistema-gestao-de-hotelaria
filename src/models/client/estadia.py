@@ -1,7 +1,9 @@
 # imports externos:
 from __future__ import annotations
+from typing import Any
 from datetime import datetime, date
 from dataclasses import dataclass
+from abc import ABC, abstractmethod
 # imports locais:
 from .state_estadia import Estado_Contexto
 from ..room.room import Quarto
@@ -10,12 +12,92 @@ from ..product.produto import Produto
 # from ..database.interfaces.estadia_interface import get_next_id, EstadiaRepository
 
 
+class Builder(ABC):
+    '''Builder abstrato'''
+    @property
+    @abstractmethod
+    def build(self) -> Estadia:
+        ...
+    @abstractmethod
+    def basic_info(self, hospede) -> Any:
+        ...
+    @abstractmethod
+    def checkin(self, data) -> Any:
+        ...
+    @abstractmethod
+    def checkout(self, data) -> Any:
+        ...
+
+class Reserva(Builder):
+    '''Builder concreto da reserva'''
+    def __init__(self) -> None:
+        self.reset()
+
+    def reset(self) -> None:
+        self._reserva = Estadia()
+
+    @property
+    def build(self):
+        reserva = self._reserva
+        self.reset()
+        return reserva
+    
+    def basic_info(self, hospede):
+        self.__hospede: Cliente = hospede
+        self.__Estado_estadia = Estado_Contexto()
+        return self
+
+    def checkin(self, data: date):
+        self.__data_prevista_checkin = data # data prevista para o cliente chegar
+        return self
+
+    def checkout(self, data: date):
+        self.__data_prevista_checkout = data # data prevista para o cliente sair
+        return self
+
+class Hospedagem(Builder):
+    '''Builder concreto da hospedagem'''
+    def __init__(self) -> None:
+        self.reset()
+
+    def reset(self) -> None:
+        self._hospedagem = Estadia()
+
+    @property
+    def build(self):
+        hospedagem = self._hospedagem
+        self.reset()
+        return hospedagem
+    
+    def basic_info(self, hospede):
+        self.__hospede: Cliente = hospede
+        self.__Estado_estadia = Estado_Contexto()
+        return self
+
+    def checkin(self, data: date):
+        self.__data_checkin = data # data real do checkin
+        return self
+        
+    def checkout(self, data: date):
+        self.__data_checkout = data # data real checkout
+        return self
+
+class Estadia():
+    def __init__(self) -> None:
+            self.parts = []
+
+    def list_Dados(self) -> None:
+        print(f"Dados: {', '.join(self.parts)}", end=".")
+
 
 @dataclass
 class reserva:
     _id: int| None = None
 
+    
+""" 
 
+# https://www.freecodecamp.org/news/how-to-use-the-builder-pattern-in-python-a-practical-guide-for-devs/
 
 class Estadia():
     '''Classe para salvar a estadia do Cliente no Hotel'''
@@ -98,4 +180,4 @@ class Estadia():
 
     @get_data_saida.setter
     def get_data_saida(self, now: datetime) -> None:
-        self.__data_saida = now
+        self.__data_saida = now """
