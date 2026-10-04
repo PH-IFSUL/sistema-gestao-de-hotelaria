@@ -1,4 +1,9 @@
+'''
+Classe que serve de interface para a troca dos estados do quarto.
+Usando padrão State
+'''
 from abc import ABC, abstractmethod
+from src.models.room import Quarto as Room
 
 class State_context:
     '''
@@ -7,26 +12,26 @@ class State_context:
     def __init__(self) -> None:
         self._state = Available()  # estado inicial do quarto
 
-    def set_estado(self, new_state) -> None: # usado para definir novo estado
+    def set_estado(self, new_state) -> None: # usado para definir novo estado   
         self._state = new_state
 
-    def book(self, room) -> None: # reservar
+    def book(self, room: Room) -> None: # reservar
         self._state.book(room)
 
-    def check_in(self, room) -> None:
+    def check_in(self, room: Room) -> None:
         self._state.check_in(room)
 
-    def check_out(self, room) -> None:
+    def check_out(self, room: Room) -> None:
         self._state.check_out(room)
 
-    def start_maintenance(self, room) -> None:
+    def start_maintenance(self, room: Room) -> None:
         self._state.start_maintenance(room)
 
-    def end_maintenance(self, room) -> None:
+    def end_maintenance(self, room: Room) -> None:
         self._state.end_maintenance(room)
 
-    def finish_cleaning(self, room) -> None:
-            self._state.finish_cleaning(room)
+    def finish_cleaning(self, room: Room) -> None:
+        self._state.finish_cleaning(room)
 
     def get_current(self) -> str:
         return self._state.get_current()
@@ -35,23 +40,26 @@ class State_context:
         return self._state.__str__()
 
 class State(ABC):
+    '''
+    classe que serve de interface para os estados do quarto.
+    '''
     @abstractmethod
-    def book(self, room) -> None:
+    def book(self, room: Room) -> None:
         ...
     @abstractmethod
-    def check_in(self, room) -> None:
+    def check_in(self, room: Room) -> None:
         ...
     @abstractmethod
-    def check_out(self, room) -> None:
+    def check_out(self, room: Room) -> None:
         ...
     @abstractmethod
-    def start_maintenance(self, room) -> None:
+    def start_maintenance(self, room: Room) -> None:
         ...
     @abstractmethod
-    def end_maintenance(self, room) -> None:
+    def end_maintenance(self, room: Room) -> None:
         ...
     @abstractmethod
-    def finish_cleaning(self, room) -> None:
+    def finish_cleaning(self, room: Room) -> None:
         ...
     @abstractmethod
     def get_current(self) -> str:
@@ -63,6 +71,9 @@ class State(ABC):
 #classes concretas dos estados
 
 class Available(State):
+    '''
+    Classe que representa o estado Disponível do quarto.
+    ''' 
     def book(self, room) -> None:
         room.estado.set_estado(Reserved())
      
@@ -88,6 +99,9 @@ class Available(State):
         return "disponivel"
     
 class Reserved(State):
+    '''
+    Classe que representa o estado Reservado do quarto.
+    '''
     def book(self, room) -> None:
         raise TypeError ("Quarto ja está reservado")
         
@@ -113,6 +127,9 @@ class Reserved(State):
             return "reservado"
 
 class Ocupied(State):
+    '''
+    Classe que representa o estado Ocupado do quarto.
+    '''
     def book(self, room) -> None:
         raise TypeError ("Quarto está Ocupado")
         
@@ -138,6 +155,9 @@ class Ocupied(State):
             return "ocupado"
     
 class Cleaning(State):
+    '''
+    Classe que representa o estado Em Limpeza do quarto.
+    '''
     def book(self, room) -> None:
         raise TypeError ("Quarto está em Limpeza")
         
@@ -163,6 +183,9 @@ class Cleaning(State):
             return "limpeza"
 
 class Maintenance(State):
+    '''
+    Classe que representa o estado Em Manutenção do quarto.
+    '''
     def book(self, room) -> None:
         raise TypeError ("Quarto está em Manutenção")
         

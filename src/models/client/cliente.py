@@ -1,15 +1,18 @@
 
 class Cliente:
-    def __init__(self, nome: str, cpf: str, telefone: str, email: str):
-        self._id: int # gerada quando o cliente é salvo
+    def __init__(self, nome: str, cpf: str, telefone: str, email: str, birth_date: str, id: int | None = None):
+        self._id: int | None = id # gerada quando o cliente é salvo
         self._nome = nome
         self._cpf = cpf
-        # self.__idade = idade
+        self._birth_date = birth_date
         self._telefone = telefone
         self._email = email
 
-    def get_id(self) -> int:
+    def get_id(self) -> int | None:
         return self._id
+
+    def set_id(self, id: int) -> None:
+        self._id = id
 
     def get_nome(self) -> str:
         return self._nome
@@ -17,8 +20,8 @@ class Cliente:
     def get_cpf(self) -> str:
         return self._cpf
 
-    """  def get_idade(self) -> int:
-        return self.__idade """
+    def get_birth_date(self) -> str:
+        return self._birth_date
 
     def get_telefone(self) -> str:
         return self._telefone

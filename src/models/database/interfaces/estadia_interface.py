@@ -1,7 +1,8 @@
-from __future__ import annotations
-from typing import Protocol, List, Optional
-from ...client.estadia import Estadia
-from ...product.produto import Produto
+from src.models.room import Quarto as Room
+from typing import Protocol, Optional
+from ...client.stay_info import Guest_Stay
+from ...invoice.invoice import Guest_Bill
+from ...invoice.itens import Bill_Item
 from datetime import date
 
 def get_next_id(repo: EstadiaRepository) -> int:
@@ -14,24 +15,27 @@ class EstadiaRepository(Protocol):
     def get_next_id() -> int:
         ...
 
-    def save(self, estadia: Estadia) -> None:
+    def save(self, estadia: Guest_Stay) -> None:
         ...
     
     def delete(self, client_id: int) -> bool:
         ...
 
-    def get_consumos(self) -> List[Produto]:
+    def get_bill(self, id_stay: int) -> Optional[Guest_Bill]:
         ...
 
-    def set_new_consumo(self) -> List[Produto]:
-            ...
-
-    def find_by_id(self, id_query: int) -> Optional[Estadia]:
+    def add_itens_to_bill(self, id_stay: int, item: Bill_Item) -> None:
         ...
 
-    def find_by_Cpf(self, cpf_query: str) -> Optional[Estadia]:
+    def find_by_id(self, id_query: int) -> Optional[Guest_Stay]:
+        ...
+
+    def find_by_cpf(self, cpf_query: str) -> Optional[Guest_Stay]:
         ...
  
-    def get_date_reservations(self, date: date) -> list[Estadia]:
+    def get_date_reservations(self, date: date) -> list[Guest_Stay]:
         ... 
+
+    def update_room(self, id_stay: int, room: Room) -> bool:
+        ...
 
