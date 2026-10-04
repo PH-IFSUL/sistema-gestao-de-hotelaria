@@ -1,10 +1,20 @@
 from .state_room import State_context
 
-
-class Quarto:
+class Room:
+    '''
+        Classe para salvar os quartos do hotel
+        
+        Args:
+            numero: numero do quarto
+            tipo: tipo do quarto
+            valor_diaria: valor da diaria do quarto
+            
+        Returns:
+            Objeto do tipo Room.
+    '''
     TIPOS = ["Simples", "Duplo", "Suíte"]
 
-    def __init__(self, numero: int, tipo: str, valor_diaria: float):
+    def __init__(self, numero: int, tipo: str, valor_diaria: float) -> None:
         if tipo not in self.TIPOS:
             raise ValueError(f"Tipo inválido. Escolha entre: {self.TIPOS}")
         self._numero = numero
@@ -21,6 +31,6 @@ class Quarto:
     def get_valor_diaria(self) -> float:
         return self._valor_diaria
 
-    def __str__(self):
+    def __str__(self) -> str:
         status = f" {self.estado.get_current()}"
         return f"Quarto {self._numero} | {self._tipo} | R$ {self._valor_diaria:.2f} | {status}"

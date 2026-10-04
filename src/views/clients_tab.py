@@ -1,12 +1,12 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from controllers.cliente_controller import ClienteController
+from controllers.client_controller import Client_Controller
 from views.style.constants import TmColors, TmFonts
-from views.forms.form import CampoFormulario
+from .components.forms import CampoFormulario
 
 
 class AbaClientes(tk.Frame):
-    def __init__(self, pai, controller: ClienteController):
+    def __init__(self, pai, controller: Client_Controller):
         super().__init__(pai, bg=TmColors.COR_FUNDO)
         self._ctrl = controller
         self._construir()

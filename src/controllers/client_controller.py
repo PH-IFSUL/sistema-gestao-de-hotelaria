@@ -1,9 +1,18 @@
-from models.client.cliente import Cliente
-from models.database.interfaces.cliente_repository_interface import ClientRepository
+from models.client.client import Client
+from models.database.interfaces.client_repository_interface import Client_Repository    
 
 
-class ClienteController:
-    def __init__(self, repositorio: ClientRepository):
+class Client_Controller:
+    '''
+        Classe para gerenciar os clientes.
+        
+        Args:
+            repositorio: repositorio de clientes
+        
+        Returns:
+            Objeto do tipo Client_Controller.
+    '''
+    def __init__(self, repositorio: Client_Repository):
         self._repo = repositorio
 
     def cadastrar(self, 
@@ -26,11 +35,11 @@ class ClienteController:
         if not telefone:
             raise ValueError("O campo Telefone é obrigatório.")
 
-        cliente = Cliente(nome, cpf, telefone, email)
+        cliente = Client(nome, cpf, telefone, email)
         self._repo.save(cliente)
         return f"Cliente '{nome}' cadastrado com sucesso."
 
-    def listar(self) -> list[Cliente]:
+    def listar(self) -> list[Client]:
         return self._repo.get_all()
 
     def remover(self, cpf: str) -> str:

@@ -4,27 +4,35 @@
         -> todas as implementações tem que ter os mesmos métodos
 '''
 from typing import Protocol, List, Optional
-from models.room.room import Quarto
+from ...room.room import Room
 
-class RoomRepository(Protocol):
-
-    def add(self, quarto: Quarto) -> None:
+class Room_Repository(Protocol):
+    '''
+    Métodos:
+        add(quarto: Room) -> None:
+        delete(number_query: int ) -> bool:
+        list() -> List[Room]:
+        find_by_number(number_query: int) -> Optional[Room]:
+        get_types() -> List[str]:
+    '''
+    
+    def add(self, quarto: Room) -> None:
         ...
 
     def delete(self, number_query: int ) -> bool:
         ...
 
-    def list(self) -> List[Quarto]:
+    def list(self) -> List[Room]:
         ...
 
-    def find_by_number(self, number_query: int) -> Optional[Quarto]:
+    def find_by_number(self, number_query: int) -> Optional[Room]:
         ...
         
     def get_types(self) -> List[str]:
         ...
         
     '''
-    def update(self, guest: Quarto) -> bool:
+    def update(self, guest: Room) -> bool:
         ... 
     
     '''

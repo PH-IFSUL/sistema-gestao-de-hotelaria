@@ -1,6 +1,6 @@
 from datetime import datetime, date
-from ..room.room import Quarto as Room
-from ..client.cliente import Cliente
+from ..room.room import Room
+from ..client.client import Client
 from ..invoice.invoice import Guest_Bill
 from ..invoice.itens import Bill_Item
 
@@ -16,16 +16,16 @@ class Reservation():
         Returns:
             Objeto do tipo reserva.
     """
-    def __init__(self, guest: Cliente, 
+    def __init__(self, guest: Client, 
                 checkin: date, 
                 checkout: date) -> None:
         self._id: int | None = None
-        self.__guest: Cliente = guest
+        self.__guest: Client = guest
         self.__checkin: date = checkin
         self.__checkout: date = checkout
 
     @property
-    def guest(self) -> Cliente:
+    def guest(self) -> Client:
         return self.__guest
     @guest.setter
     def guest(self, guest) -> None:
@@ -57,13 +57,13 @@ class Guest_Stay():
         Objeto do tipo Guest_Stay.
     """
     
-    def __init__(self, guest: Cliente, 
+    def __init__(self, guest: Client, 
                  room_number: Room | None,
                  checkin_date: datetime, 
                  checkout_date: datetime) -> None:
         
         self._id: int | None = None
-        self.__guest: Cliente = guest
+        self.__guest: Client = guest
         self.__room_number: Room | None = room_number
         self.__checkin_date = checkin_date
         self.__checkout_date = checkout_date
@@ -77,7 +77,7 @@ class Guest_Stay():
         self._id = new_id
     
     @property
-    def guest(self) -> Cliente:
+    def guest(self) -> Client:
         return self.__guest
     @guest.setter
     def guest(self, guest) -> None:

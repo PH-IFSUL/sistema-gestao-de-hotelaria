@@ -1,22 +1,26 @@
 
 from typing import List, Optional
-from models.room.room import Quarto
+from models.room.room import Room
 
-class InMemoryRoomRepository:
+class In_Memory_Room_Repository:
+    '''
+        Implementação da interface Room_Repository em memória.
+    '''
+    
     def __init__(self):
-        self._quartos: List[Quarto] = []
+        self._quartos: List[Room] = []
         self._tipos: List[str] = []
 
-    def add(self, quarto: Quarto) -> None:
+    def add(self, quarto: Room) -> None:
         if self.find_by_number(quarto.get_numero()):
             raise ValueError(f"Já existe um quarto com o"
                              f" número {quarto.get_numero()}.")
         self._quartos.append(quarto)
 
-    def list(self) -> list[Quarto]:
+    def list(self) -> list[Room]:
         return list(self._quartos)
 
-    def find_by_number(self, number_query: int) -> Optional[Quarto]:
+    def find_by_number(self, number_query: int) -> Optional[Room]:
         for q in self._quartos:
             if q.get_numero() == number_query:
                 return q

@@ -3,7 +3,6 @@ Classe que serve de interface para a troca dos estados do quarto.
 Usando padrão State
 '''
 from abc import ABC, abstractmethod
-from src.models.room import Quarto as Room
 
 class State_context:
     '''
@@ -15,22 +14,22 @@ class State_context:
     def set_estado(self, new_state) -> None: # usado para definir novo estado   
         self._state = new_state
 
-    def book(self, room: Room) -> None: # reservar
+    def book(self, room) -> None: # reservar
         self._state.book(room)
 
-    def check_in(self, room: Room) -> None:
+    def check_in(self, room) -> None:
         self._state.check_in(room)
 
-    def check_out(self, room: Room) -> None:
+    def check_out(self, room) -> None:
         self._state.check_out(room)
 
-    def start_maintenance(self, room: Room) -> None:
+    def start_maintenance(self, room) -> None:
         self._state.start_maintenance(room)
 
-    def end_maintenance(self, room: Room) -> None:
+    def end_maintenance(self, room) -> None:
         self._state.end_maintenance(room)
 
-    def finish_cleaning(self, room: Room) -> None:
+    def finish_cleaning(self, room) -> None:
         self._state.finish_cleaning(room)
 
     def get_current(self) -> str:
@@ -44,22 +43,22 @@ class State(ABC):
     classe que serve de interface para os estados do quarto.
     '''
     @abstractmethod
-    def book(self, room: Room) -> None:
+    def book(self, room) -> None:
         ...
     @abstractmethod
-    def check_in(self, room: Room) -> None:
+    def check_in(self, room) -> None:
         ...
     @abstractmethod
-    def check_out(self, room: Room) -> None:
+    def check_out(self, room) -> None:
         ...
     @abstractmethod
-    def start_maintenance(self, room: Room) -> None:
+    def start_maintenance(self, room) -> None:
         ...
     @abstractmethod
-    def end_maintenance(self, room: Room) -> None:
+    def end_maintenance(self, room) -> None:
         ...
     @abstractmethod
-    def finish_cleaning(self, room: Room) -> None:
+    def finish_cleaning(self, room) -> None:
         ...
     @abstractmethod
     def get_current(self) -> str:

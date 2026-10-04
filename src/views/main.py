@@ -1,12 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
-from controllers.cliente_controller import ClienteController
-from controllers.quarto_controller import QuartoController
-from views.clients_tab.main import AbaClientes
-from views.rooms_tab.main import AbaQuartos
+from controllers.room_controller import Room_Controller
+from controllers.client_controller import Client_Controller
+from views.clients_tab import AbaClientes
+from views.rooms_tab import AbaQuartos
 from views.style.constants import TmColors, TmFonts
 
 def _configurar_estilo():
+    """
+    Configura o estilo da aplicação.
+    """
     style = ttk.Style()
     style.theme_use("clam")
     style.configure("TNotebook", background=TmColors.COR_FUNDO, borderwidth=0)
@@ -24,7 +27,10 @@ def _configurar_estilo():
 
 
 class JanelaPrincipal(tk.Tk):
-    def __init__(self, cliente_ctrl: ClienteController, quarto_ctrl: QuartoController):
+    '''
+    Classe que representa a janela principal.
+    '''
+    def __init__(self, cliente_ctrl: Client_Controller, quarto_ctrl: Room_Controller):
         super().__init__()
         self.title("Sistema de Gestão de Hotel")
         self.geometry("820x520")
@@ -33,7 +39,7 @@ class JanelaPrincipal(tk.Tk):
         _configurar_estilo()
         self._construir(cliente_ctrl, quarto_ctrl)
 
-    def _construir(self, cliente_ctrl: ClienteController, quarto_ctrl: QuartoController):
+    def _construir(self, cliente_ctrl: Client_Controller, quarto_ctrl: Room_Controller):
         header = tk.Frame(self, bg=TmColors.COR_ACCENT, height=52)
         header.pack(fill="x")
         header.pack_propagate(False)
