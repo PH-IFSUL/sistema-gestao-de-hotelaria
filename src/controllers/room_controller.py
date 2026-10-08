@@ -11,7 +11,6 @@ class Room_Controller:
         Returns:
             Objeto do tipo Room_Controller.
     '''
-    
     def __init__(self, repo: Room_Repository):
         self._repo = repo
 

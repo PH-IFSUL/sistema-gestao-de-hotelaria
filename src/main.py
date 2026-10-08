@@ -6,13 +6,19 @@ from views.main import JanelaPrincipal
 
 
 def main():
-    repo_clientes = In_Memory_Client_Repository()
+    '''
+    selecionar repositórios (aqui manda a implementação escolhida, não o protocolo(interface) dele).
+    '''
+    repo_clientes = In_Memory_Client_Repository() 
     repo_quartos  = In_Memory_Room_Repository()
 
-    ctrl_clientes = Client_Controller(repo_clientes)
+    '''
+    controller recebe o repositório escolhido.
+    '''
+    ctrl_clientes = Client_Controller(repo_clientes) 
     ctrl_quartos  = Room_Controller(repo_quartos)
 
-    app = JanelaPrincipal(ctrl_clientes, ctrl_quartos)
+    app = JanelaPrincipal(ctrl_clientes, ctrl_quartos) # janela principal recebe os controllers
     app.mainloop()
 
 
