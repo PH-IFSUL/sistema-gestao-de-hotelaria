@@ -8,6 +8,7 @@ from views.main import JanelaPrincipal
 def main():
     '''
     selecionar repositórios (aqui manda a implementação escolhida, não o protocolo(interface) dele).
+    Se as classes estiverem iguais, então ele deve aceitar a implementação.
     '''
     repo_clientes = In_Memory_Client_Repository() 
     repo_quartos  = In_Memory_Room_Repository()
