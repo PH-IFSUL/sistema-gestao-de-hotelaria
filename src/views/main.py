@@ -61,5 +61,5 @@ class JanelaPrincipal(tk.Tk):
         aba_quartos = AbaQuartos(notebook, quarto_ctrl)
         notebook.add(aba_quartos, text="  🛏  Quartos  ")
 
-        aba_reservas = AbaReservas(notebook, stay_ctrl)
-        notebook.add(aba_reservas, text="  📖  Reservas  ")
+        #aba_reservas = AbaReservas(notebook, stay_ctrl)
+        #notebook.add(aba_reservas, text="  📖  Reservas  ")
