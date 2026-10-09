@@ -44,6 +44,8 @@ python src/main.py
 
 * [Requisitos Funcionais e Não Funcionais](docs/requisitos.md)
 * [Regras de Negócio](docs/regras_de_negocio.md)
+* [Padrões de Projeto](docs/padroes_de_projeto.md)
+* [Padrões de Arquitetura](docs/padroes_de_arquitetura.md)
 
 ## Diagramas
 
