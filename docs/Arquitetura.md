@@ -1,6 +1,6 @@
 
 ## 1. Documentação Explicativa das Camadas e Classes
-O sistema utiliza o padrão arquitetural **MVC (Model-View-Controller)** em Python, combinado com padrões de projeto comportamentais e estruturais avançados:
+O sistema utiliza o padrão arquitetural **MVC (Model-View-Controller)** em Python, combinado com padrões de projeto:
 - **State Pattern**: Para o controle de ciclo de vida e gerenciamento de transição de estados dos quartos do hotel.
 - **Repository Pattern**: Para desacoplar a camada de negócio da persistência de dados (através de interfaces `Protocol`).
 
@@ -67,7 +67,7 @@ Available ──(book)──> Reserved ──(check_in)──> Ocupied ──(ch
 
 ### 1.3. Padrão de Projeto: Repository Pattern (`src/models/database/`)
 
-O **Repository Pattern** isola a lógica de domínio do acesso a dados. O sistema utiliza `typing.Protocol` do Python para definir contratos/interfaces estáticas.
+O **Repository Pattern** isola a lógica de domínio do acesso a dados. O sistema utiliza `typing.Protocol` do Python para definir contratos/interfaces estáticas. Desta forma, a lógica de domínio não sabe como os dados são armazenados ou recuperados, podendo ser implementado em memória, arquivos JSON ou banco de dados relacional. Atualmente, está implementado em memória, porém será feita a transição para banco de dados relacional no futuro.
 
 #### **Interfaces (`src/models/database/interfaces/`)**:
 - **`Client_Repository`** ([`client_repository_interface.py`](file:///c:/Users/roger/OneDrive/Documentos/GitHub/sistema-gestao-de-hotelaria/src/models/database/interfaces/client_repository_interface.py)): Interface com as operações essenciais para clientes (`save`, `delete`, `get_all`, `find_by_id`, `find_by_Cpf`, `update`).
@@ -90,4 +90,4 @@ Os controladores realizam a intermediação entre as telas (Views) e as regras d
 - **`Room_Controller`** ([`room_controller.py`](file:///c:/Users/roger/OneDrive/Documentos/GitHub/sistema-gestao-de-hotelaria/src/controllers/room_controller.py)):
   - Valida dados do quarto (número inteiro positivo, obrigatoriedade de tipo e conversão do valor da diária float).
   - Gerencia quartos através de `Room_Repository`.
-  - Provê utilitários para consultar o nome do estado (`get_state_name()`) e a tag textual do estado (`get_state_tag()`).
+  - Provê utilitários para consultar o nome do estado (`get_state_name()`) e a tag textual do estado para uso posterior na view (`get_state_tag()`).
