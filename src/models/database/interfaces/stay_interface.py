@@ -53,5 +53,6 @@ class Stay_Repository(Protocol):
 
     def update_room(self, room: Room) -> bool:
         ...
+        
     def update_client(self, client: Client) -> bool:
         ...

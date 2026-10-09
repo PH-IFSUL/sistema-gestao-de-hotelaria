@@ -43,7 +43,7 @@ class JanelaPrincipal(tk.Tk):
         header = tk.Frame(self, bg=TmColors.COR_ACCENT, height=52)
         header.pack(fill="x")
         header.pack_propagate(False)
-        tk.Label(header, text="🏨  Sistema de Gestão de Hotel",
+        tk.Label(header, text="🏨  Sistema de Gestão de Hotel",  # configurar .ini para mudar nome do hotel
                  font=("Segoe UI", 14, "bold"), bg=TmColors.COR_ACCENT,
                  fg="white").pack(side="left", padx=16, pady=12)
         tk.Label(header, text="Protótipo MVC · Tkinter",
