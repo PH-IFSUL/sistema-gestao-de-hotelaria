@@ -2,8 +2,10 @@ import tkinter as tk
 from tkinter import ttk
 from controllers.room_controller import Room_Controller
 from controllers.client_controller import Client_Controller
+from controllers.stay_controller import Stay_Controller
 from views.clients_tab import AbaClientes
 from views.rooms_tab import AbaQuartos
+from views.reservations_tab import AbaReservas
 from views.style.constants import TmColors, TmFonts
 
 def _configurar_estilo():
@@ -30,16 +32,16 @@ class JanelaPrincipal(tk.Tk):
     '''
     Classe que representa a janela principal.
     '''
-    def __init__(self, cliente_ctrl: Client_Controller, quarto_ctrl: Room_Controller):
+    def __init__(self, cliente_ctrl: Client_Controller, quarto_ctrl: Room_Controller, stay_ctrl: Stay_Controller):
         super().__init__()
         self.title("Sistema de Gestão de Hotel")
         self.geometry("820x520")
         self.minsize(720, 480)
         self.configure(bg=TmColors.COR_FUNDO)
         _configurar_estilo()
-        self._construir(cliente_ctrl, quarto_ctrl)
+        self._construir(cliente_ctrl, quarto_ctrl, stay_ctrl)
 
-    def _construir(self, cliente_ctrl: Client_Controller, quarto_ctrl: Room_Controller):
+    def _construir(self, cliente_ctrl: Client_Controller, quarto_ctrl: Room_Controller, stay_ctrl: Stay_Controller):
         header = tk.Frame(self, bg=TmColors.COR_ACCENT, height=52)
         header.pack(fill="x")
         header.pack_propagate(False)
@@ -58,3 +60,6 @@ class JanelaPrincipal(tk.Tk):
 
         aba_quartos = AbaQuartos(notebook, quarto_ctrl)
         notebook.add(aba_quartos, text="  🛏  Quartos  ")
+
+        aba_reservas = AbaReservas(notebook, stay_ctrl)
+        notebook.add(aba_reservas, text="  📖  Reservas  ")

@@ -2,6 +2,7 @@ from models.database.repositories.client_memory_repository import In_Memory_Clie
 from models.database.repositories.room_memory_repository import In_Memory_Room_Repository
 from controllers.room_controller import Room_Controller
 from controllers.client_controller import Client_Controller
+from controllers.stay_controller import Stay_Controller
 from views.main import JanelaPrincipal
 
 
@@ -18,8 +19,9 @@ def main():
     '''
     ctrl_clientes = Client_Controller(repo_clientes) 
     ctrl_quartos  = Room_Controller(repo_quartos)
+    stay_ctrl     = Stay_Controller(repo_clientes, repo_quartos)
 
-    app = JanelaPrincipal(ctrl_clientes, ctrl_quartos) # janela principal recebe os controllers
+    app = JanelaPrincipal(ctrl_clientes, ctrl_quartos, stay_ctrl) # janela principal recebe os controllers
     app.mainloop()
 
 
