@@ -1,7 +1,11 @@
 import sqlite3
 from pathlib import Path
 
-CAMINHO_BANCO = Path(__file__).resolve().parents[3] / "data" / "hotel.db" ## onde fica o banco
+CAMINHO_BANCO = Path(__file__).resolve().parents[3] / "data" / "hotel.db" ## onde fica o banco 
+                                                                          ##parents[0] é database/ 
+                                                                          ##parents[1] é models/
+                                                                          ##parents[2] é src/
+                                                                          ##parents[3] é a raiz do projeto
 
 
 class Database_Connection:
