@@ -51,17 +51,4 @@ class ClienteRepositorioMemoria:
             return True
         return False
 
-    # Compatibilidade
-    update_next_id = atualizar_proximo_id
-    save = salvar
-    delete = remover
-    get_all = obter_todos
-    find_by_id = buscar_por_id
-    find_by_Cpf = buscar_por_cpf
-    update = atualizar
-
-    @property
-    def _clients(self) -> list[Cliente]:
-        return self._clientes
-
 

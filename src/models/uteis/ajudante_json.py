@@ -19,9 +19,3 @@ class AjudanteJSON:
                 return json.load(arquivo)
         return None
 
-    # Compatibilidade
-    load_from_json = carregar_de_json
-
-
-# Alias para compatibilidade
-JSONHelper = AjudanteJSON

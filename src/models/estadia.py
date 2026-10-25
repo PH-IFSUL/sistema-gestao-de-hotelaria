@@ -61,31 +61,6 @@ class Reserva:
     def data_checkout(self, valor: date) -> None:
         self._data_checkout = valor
 
-    # Compatibilidade
-    @property
-    def guest(self) -> Cliente:
-        return self._hospede
-
-    @guest.setter
-    def guest(self, hospede: Cliente) -> None:
-        self._hospede = hospede
-
-    @property
-    def checkin_date(self) -> date:
-        return self._data_checkin
-
-    @checkin_date.setter
-    def checkin_date(self, valor: date) -> None:
-        self._data_checkin = valor
-
-    @property
-    def checkout(self) -> date:
-        return self._data_checkout
-
-    @checkout.setter
-    def checkout(self, valor: date) -> None:
-        self._data_checkout = valor
-
 
 class Estadia:
     """
@@ -161,36 +136,4 @@ class Estadia:
     def adicionar_item(self, item: ItemFatura) -> None:
         self._fatura.adicionar_item(item)
 
-    # Compatibilidade
-    @property
-    def guest(self) -> Cliente:
-        return self._hospede
-
-    @guest.setter
-    def guest(self, hospede: Cliente) -> None:
-        self._hospede = hospede
-
-    @property
-    def room_number(self) -> Quarto | None:
-        return self._quarto
-
-    @room_number.setter
-    def room_number(self, quarto: Quarto | None) -> None:
-        self._quarto = quarto
-
-    @property
-    def guest_bill(self) -> Fatura:
-        return self._fatura
-
-    @guest_bill.setter
-    def guest_bill(self, fatura: Fatura) -> None:
-        self._fatura = fatura
-
-    @property
-    def checkin_date(self) -> datetime:
-        return self._data_checkin
-
-    @property
-    def checkout_date(self) -> datetime:
-        return self._data_checkout
-
+    

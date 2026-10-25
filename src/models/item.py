@@ -57,23 +57,6 @@ class Item:
             raise ValueError("preço não pode ser vazio")
         self._preco = float(value)
 
-    # Compatibilidade com atributos em inglês
-    @property
-    def name(self) -> str:
-        return self._nome
-
-    @name.setter
-    def name(self, value: str) -> None:
-        self.nome = value
-
-    @property
-    def price(self) -> float:
-        return self._preco
-
-    @price.setter
-    def price(self, value: float) -> None:
-        self.preco = value
-
     def __str__(self) -> str:
         return f"Item: {self._nome} - Preço: R${self._preco:.2f}"
 

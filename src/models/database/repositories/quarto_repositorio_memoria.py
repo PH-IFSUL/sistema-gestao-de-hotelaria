@@ -38,11 +38,3 @@ class QuartoRepositorioMemoria:
                 tipos.append(quarto.get_tipo())
         return tipos
 
-    # Compatibilidade
-    add = adicionar
-    list = listar
-    find_by_number = buscar_por_numero
-    delete = remover
-    get_types = obter_tipos
-
-
