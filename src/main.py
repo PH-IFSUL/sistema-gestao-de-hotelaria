@@ -1,27 +1,33 @@
-from models.database.repositories.client_memory_repository import In_Memory_Client_Repository
-from models.database.repositories.room_memory_repository import In_Memory_Room_Repository
-from controllers.room_controller import Room_Controller
-from controllers.client_controller import Client_Controller
-from controllers.stay_controller import Stay_Controller
-from views.main import JanelaPrincipal
+from models.database.repositories.cliente_repositorio_memoria import ClienteRepositorioMemoria
+from models.database.repositories.quarto_repositorio_memoria import QuartoRepositorioMemoria
+from controllers.quarto_controller import QuartoController
+from controllers.cliente_controller import ClienteController
+from controllers.estadia_controller import EstadiaController
+from views.janela_principal import JanelaPrincipal
 
 
 def main():
-    '''
-    selecionar repositórios (aqui manda a implementação escolhida, não o protocolo(interface) dele).
-    Se as classes estiverem iguais, então ele deve aceitar a implementação.
-    '''
-    repo_clientes = In_Memory_Client_Repository() 
-    repo_quartos  = In_Memory_Room_Repository()
+    """
+    Selecionar repositórios (aqui passa a implementação escolhida, não o protocolo/interface).
+    Se as classes seguirem o mesmo contrato, ele aceita a implementação.
+    """
+    repo_clientes = ClienteRepositorioMemoria()
+    repo_quartos = QuartoRepositorioMemoria()
+
+    """
+    Controller recebe o repositório escolhido.
+    """
+    ctrl_clientes = ClienteController(repo_clientes)
+    ctrl_quartos = QuartoController(repo_quartos)
+    stay_ctrl = EstadiaController(repo_clientes, repo_quartos)
 
     '''
-    controller recebe o repositório escolhido.
+    Abre a janela principal, que recebe os controladores
     '''
-    ctrl_clientes = Client_Controller(repo_clientes) 
-    ctrl_quartos  = Room_Controller(repo_quartos)
-    stay_ctrl     = Stay_Controller(repo_clientes, repo_quartos)
-
-    app = JanelaPrincipal(ctrl_clientes, ctrl_quartos, stay_ctrl) # janela principal recebe os controllers
+    app = JanelaPrincipal(ctrl_clientes, ctrl_quartos, stay_ctrl)
+    '''
+    Inicia o loop principal da aplicação
+    '''
     app.mainloop()
 
 

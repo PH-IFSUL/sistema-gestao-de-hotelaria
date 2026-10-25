@@ -1,6 +1,6 @@
 # Diagramas de Classes do Sistema
 
-Este documento apresenta a modelagem de classes do **Sistema de Gestão de Hotelaria**. O sistema utiliza o padrão arquitetural **MVC (Model-View-Controller)**
+Este documento apresenta a modelagem de classes do **Sistema de Gestão de Hotelaria**. O sistema utiliza o padrão arquitetural **MVC (Model-View-Controller)**.
 
 ---
 
@@ -10,8 +10,8 @@ Este documento apresenta a modelagem de classes do **Sistema de Gestão de Hotel
 classDiagram
     direction TB
 
-    namespace Models_Domain {
-        class Client {
+    namespace Models_Dominio {
+        class Cliente {
             -_id : int | None
             -_nome : str
             -_cpf : str
@@ -25,210 +25,225 @@ classDiagram
             +get_email() str
         }
 
-        class Room {
+        class Quarto {
             +TIPOS : list~str~
             -_numero : int
             -_tipo : str
             -_valor_diaria : float
-            +estado : State_context
+            +estado : EstadoContexto
             +get_numero() int
             +get_tipo() str
             +get_valor_diaria() float
         }
 
-        class Reservation {
+        class Reserva {
             -_id : int | None
-            -__guest : Client
-            -__checkin : date
-            -__checkout : date
-            +guest : Client
-            +checkin_date : date
-            +checkout : date
+            -_hospede : Cliente
+            -_data_checkin : date
+            -_data_checkout : date
+            +hospede : Cliente
+            +data_checkin : date
+            +data_checkout : date
         }
 
-        class Guest_Stay {
+        class Estadia {
             -_id : int | None
-            -__guest : Client
-            -__room_number : Room
-            -__checkin_date : datetime
-            -__checkout_date : datetime
-            -__guest_bill : Guest_Bill
-            +get_total() float
-            +add_item(item: Bill_Item) void
+            -_hospede : Cliente
+            -_quarto : Quarto
+            -_data_checkin : datetime
+            -_data_checkout : datetime
+            -_fatura : Fatura
+            +obter_total() float
+            +adicionar_item(item: ItemFatura) void
         }
 
         class Item {
             -_id : int
-            -__name : str
-            -__price : float
+            -_nome : str
+            -_preco : float
             +id : int
-            +name : str
-            +price : float
+            +nome : str
+            +preco : float
         }
 
-        class Bill_Item {
+        class ItemFatura {
             -_id : int
-            -__item : Item
-            -__quantity : int
+            -_item : Item
+            -_quantidade : int
             +id : int
             +item : Item
-            +quantity : int
+            +quantidade : int
         }
 
-        class Guest_Bill {
-            -_id_stay : int
-            -__itens : list~Bill_Item~
-            +add_itens(item: Bill_Item) void
-            +calculate_total() float
+        class Fatura {
+            -_id_estadia : int
+            -_itens : list~ItemFatura~
+            +adicionar_item(item: ItemFatura) void
+            +calcular_total() float
         }
     }
 
-    namespace Pattern_State {
-        class State_context {
-            -_state : State
-            +set_estado(new_state: State) void
-            +book(room: Room) void
-            +check_in(room: Room) void
-            +check_out(room: Room) void
-            +start_maintenance(room: Room) void
-            +end_maintenance(room: Room) void
-            +finish_cleaning(room: Room) void
-            +get_current() str
+    namespace Padrao_State {
+        class EstadoContexto {
+            -_state : Estado
+            +set_estado(novo_estado: Estado) void
+            +reservar(quarto: Quarto) void
+            +check_in(quarto: Quarto) void
+            +check_out(quarto: Quarto) void
+            +iniciar_manutencao(quarto: Quarto) void
+            +finalizar_manutencao(quarto: Quarto) void
+            +finalizar_limpeza(quarto: Quarto) void
+            +obter_atual() str
         }
 
-        class State {
+        class Estado {
             <<abstract>>
-            +book(room: Room)* void
-            +check_in(room: Room)* void
-            +check_out(room: Room)* void
-            +start_maintenance(room: Room)* void
-            +end_maintenance(room: Room)* void
-            +finish_cleaning(room: Room)* void
-            +get_current()* str
+            +reservar(quarto: Quarto)* void
+            +check_in(quarto: Quarto)* void
+            +check_out(quarto: Quarto)* void
+            +iniciar_manutencao(quarto: Quarto)* void
+            +finalizar_manutencao(quarto: Quarto)* void
+            +finalizar_limpeza(quarto: Quarto)* void
+            +obter_atual()* str
         }
 
-        class Available {
-            +book(room: Room) void
-            +check_in(room: Room) void
-            +start_maintenance(room: Room) void
-            +get_current() str
+        class Disponivel {
+            +reservar(quarto: Quarto) void
+            +check_in(quarto: Quarto) void
+            +iniciar_manutencao(quarto: Quarto) void
+            +obter_atual() str
         }
 
-        class Reserved {
-            +check_in(room: Room) void
-            +get_current() str
+        class Reservado {
+            +check_in(quarto: Quarto) void
+            +obter_atual() str
         }
 
-        class Ocupied {
-            +check_out(room: Room) void
-            +get_current() str
+        class Ocupado {
+            +check_out(quarto: Quarto) void
+            +obter_atual() str
         }
 
-        class Cleaning {
-            +start_maintenance(room: Room) void
-            +finish_cleaning(room: Room) void
-            +get_current() str
+        class Limpeza {
+            +iniciar_manutencao(quarto: Quarto) void
+            +finalizar_limpeza(quarto: Quarto) void
+            +obter_atual() str
         }
 
-        class Maintenance {
-            +end_maintenance(room: Room) void
-            +get_current() str
+        class Manutencao {
+            +finalizar_manutencao(quarto: Quarto) void
+            +obter_atual() str
         }
     }
 
-    namespace Repositories {
-        class Client_Repository {
+    namespace Repositorios {
+        class ClienteRepositorio {
             <<interface>>
-            +save(cliente: Client)* void
-            +delete(client_cpf: str)* bool
-            +get_all()* list~Client~
-            +find_by_id(id_query: int)* Client
-            +find_by_Cpf(cpf_query: str)* Client
-            +update(guest: Client)* bool
+            +salvar(cliente: Cliente)* void
+            +remover(cpf_cliente: str)* bool
+            +obter_todos()* list~Cliente~
+            +buscar_por_id(id_busca: int)* Cliente
+            +buscar_por_cpf(cpf_busca: str)* Cliente
+            +atualizar(cliente: Cliente)* bool
         }
 
-        class In_Memory_Client_Repository {
-            -_clients : list~Client~
-            -__next_id : int
-            +save(cliente: Client) void
-            +delete(client_cpf: str) bool
-            +get_all() list~Client~
-            +find_by_id(id_query: int) Client
-            +find_by_Cpf(cpf_query: str) Client
+        class ClienteRepositorioMemoria {
+            -_clientes : list~Cliente~
+            -_proximo_id : int
+            +salvar(cliente: Cliente) void
+            +remover(cpf_cliente: str) bool
+            +obter_todos() list~Cliente~
+            +buscar_por_id(id_busca: int) Cliente
+            +buscar_por_cpf(cpf_busca: str) Cliente
         }
 
-        class Room_Repository {
+        class QuartoRepositorio {
             <<interface>>
-            +add(quarto: Room)* void
-            +delete(number_query: int)* bool
-            +list()* list~Room~
-            +find_by_number(number_query: int)* Room
-            +get_types()* list~str~
+            +adicionar(quarto: Quarto)* void
+            +remover(numero_busca: int)* bool
+            +listar()* list~Quarto~
+            +buscar_por_numero(numero_busca: int)* Quarto
+            +obter_tipos()* list~str~
         }
 
-        class In_Memory_Room_Repository {
-            -_quartos : list~Room~
-            -_tipos : list~str~
-            +add(quarto: Room) void
-            +delete(number_query: int) bool
-            +list() list~Room~
-            +find_by_number(number_query: int) Room
-            +get_types() list~str~
+        class QuartoRepositorioMemoria {
+            -_quartos : list~Quarto~
+            +adicionar(quarto: Quarto) void
+            +remover(numero_busca: int) bool
+            +listar() list~Quarto~
+            +buscar_por_numero(numero_busca: int) Quarto
+            +obter_tipos() list~str~
         }
 
-        class Stay_Repository {
+        class EstadiaRepositorio {
             <<interface>>
-            +get_next_id()* int
-            +save(estadia: Guest_Stay)* void
-            +delete(client_id: int)* bool
-            +get_bill(id_stay: int)* Guest_Bill
-            +add_itens_to_bill(id_stay: int, item: Bill_Item)* void
-            +find_by_id(id_query: int)* Guest_Stay
-            +find_by_cpf(cpf_query: str)* Guest_Stay
-            +get_date_reservations(date: date)* list~Guest_Stay~
+            +obter_proximo_id()* int
+            +salvar(estadia: Estadia)* void
+            +remover(id_cliente: int)* bool
+            +obter_fatura(id_estadia: int)* Fatura
+            +adicionar_item_fatura(id_estadia: int, item: ItemFatura)* void
+            +buscar_por_id(id_busca: int)* Estadia
+            +buscar_por_cpf(cpf_busca: str)* Estadia
+            +obter_reservas_por_data(data: date)* list~Estadia~
         }
     }
 
     namespace Controllers {
-        class Client_Controller {
-            -_repo : Client_Repository
+        class ClienteController {
+            -_repo : ClienteRepositorio
             +cadastrar(nome: str, cpf: str, telefone: str, email: str) str
-            +listar() list~Client~
+            +listar() list~Cliente~
             +remover(cpf: str) str
         }
 
-        class Room_Controller {
-            -_repo : Room_Repository
+        class QuartoController {
+            -_repo : QuartoRepositorio
             +cadastrar(numero_str: str, tipo: str, valor_str: str) str
-            +listar() list~Room~
+            +listar() list~Quarto~
             +remover(numero_str: str) str
-            +get_state_name(room: Room) str
-            +get_state_tag(room: Room) str
+            +obter_nome_estado(quarto: Quarto) str
+            +obter_tag_estado(quarto: Quarto) str
+        }
+
+        class EstadiaController {
+            -_cliente_repo : ClienteRepositorio
+            -_quarto_repo : QuartoRepositorio
+            +realizar_reserva(cliente: Cliente, quarto: Quarto, data_inicio: date, data_fim: date) void
+            +adicionar_cliente_estadia(estadia: Estadia, cliente: Cliente) void
+            +adicionar_quarto_estadia(estadia: Estadia, quarto: Quarto) void
+            +remover_cliente_estadia(estadia: Estadia, cliente: Cliente) void
+            +remover_quarto_estadia(estadia: Estadia, quarto: Quarto) void
+            +check_in(estadia: Estadia, data_checkin: datetime) void
+            +check_out(estadia: Estadia, data_checkout: datetime) void
+            +obter_todas_estadias() void
+            +obter_todas_reservas() void
         }
     }
 
     %% Relacionamentos do Domínio
-    Reservation "0..*" --o "1" Client : reserva para
-    Guest_Stay "0..*" --o "1" Client : hóspede
-    Guest_Stay "0..*" --o "0..1" Room : alocado em
-    Guest_Stay "1" *-- "1" Guest_Bill : possui
-    Guest_Bill "1" *-- "0..*" Bill_Item : contém
-    Bill_Item "0..*" --o "1" Item : refere-se a
+    Reserva "0..*" --o "1" Cliente : reserva para
+    Estadia "0..*" --o "1" Cliente : hóspede
+    Estadia "0..*" --o "0..1" Quarto : alocado em
+    Estadia "1" *-- "1" Fatura : possui
+    Fatura "1" *-- "0..*" ItemFatura : contém
+    ItemFatura "0..*" --o "1" Item : refere-se a
 
     %% Relacionamentos do State Pattern
-    Room "1" *-- "1" State_context : possui estado
-    State_context "1" o-- "1" State : estado atual
-    State <|-- Available : implementa
-    State <|-- Reserved : implementa
-    State <|-- Ocupied : implementa
-    State <|-- Cleaning : implementa
-    State <|-- Maintenance : implementa
+    Quarto "1" *-- "1" EstadoContexto : possui estado
+    EstadoContexto "1" o-- "1" Estado : estado atual
+    Estado <|-- Disponivel : implementa
+    Estado <|-- Reservado : implementa
+    Estado <|-- Ocupado : implementa
+    Estado <|-- Limpeza : implementa
+    Estado <|-- Manutencao : implementa
 
     %% Relacionamentos de Repositórios
-    Client_Repository <|.. In_Memory_Client_Repository : realiza
-    Room_Repository <|.. In_Memory_Room_Repository : realiza
+    ClienteRepositorio <|.. ClienteRepositorioMemoria : realiza
+    QuartoRepositorio <|.. QuartoRepositorioMemoria : realiza
 
     %% Relacionamentos de Controllers
-    Client_Controller "1" --> "1" Client_Repository : utiliza
-    Room_Controller "1" --> "1" Room_Repository : utiliza
+    ClienteController "1" --> "1" ClienteRepositorio : utiliza
+    QuartoController "1" --> "1" QuartoRepositorio : utiliza
+    EstadiaController "1" --> "1" ClienteRepositorio : utiliza
+    EstadiaController "1" --> "1" QuartoRepositorio : utiliza
 ```

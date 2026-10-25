@@ -6,32 +6,32 @@ Este documento descreve os padrões de projeto usados no protótipo do Sistema d
 
 | Padrão | Onde aparece | Para que serve |
 |--------|--------------|----------------|
-| Repository | `model.py` | Separar o armazenamento dos dados do resto do sistema |
-| Injeção de dependência | `main.py` | Entregar a cada classe os objetos de que ela precisa |
-| MVC | `model.py`, `view.py`, `controller.py` | Separar dados, regras e tela |
+| Repository | `src/models/database/` | Separar o armazenamento dos dados do resto do sistema |
+| Injeção de dependência | `src/main.py` | Entregar a cada classe os objetos de que ela precisa |
+| MVC | `src/models/`, `src/views/`, `src/controllers/` | Separar dados, regras e tela |
 
 ## 1. Repository
 
 **Problema.** O sistema precisa guardar clientes e quartos. Hoje os dados ficam em memória. Mais tarde eles vão para o banco de dados. O restante do código não deve mudar quando isso acontecer.
 
-**Solução.** Cada entidade tem uma classe de repositório. Só essa classe sabe como os dados são guardados. As outras classes usam os métodos `adicionar`, `listar`, `buscar` e `remover`.
+**Solução.** Cada entidade tem uma classe de repositório com interface definida via `Protocol`. Só essa classe sabe como os dados são guardados. As outras classes usam os métodos `salvar`, `listar`, `buscar` e `remover`.
 
-**Onde está.** `ClienteRepositorio` e `QuartoRepositorio`, em `model.py`.
+**Onde está.** `ClienteRepositorio` e `QuartoRepositorio` em `src/models/database/interfaces/`, com implementações concretas `ClienteRepositorioMemoria` e `QuartoRepositorioMemoria` em `src/models/database/repositories/`.
 
 ```python
-class ClienteRepositorio:
+class ClienteRepositorioMemoria:
     def __init__(self):
         self._clientes: list[Cliente] = []
 
-    def adicionar(self, cliente: Cliente) -> None:
+    def salvar(self, cliente: Cliente) -> None:
         if self.buscar_por_cpf(cliente.get_cpf()):
-            raise ValueError("Já existe um cliente com este CPF.")
+            raise ValueError(f"Já existe um cliente com o CPF {cliente.get_cpf()}.")
         self._clientes.append(cliente)
 ```
 
 **Decisão de projeto.** A regra "o CPF é único" e a regra "o número do quarto é único" ficam dentro do repositório. Assim, nenhum caminho do sistema consegue gravar um dado repetido.
 
-**Como trocar para o banco de dados.** Criar uma classe nova, por exemplo `ClienteRepositorioSQLite`, com os mesmos métodos. O controller e a view não mudam. Só o `main.py` passa a criar a classe nova.
+**Como trocar para o banco de dados.** Criar uma classe nova, por exemplo `ClienteRepositorioSQLite`, implementando a mesma interface `ClienteRepositorio`. O controller e a view não mudam. Só o `main.py` passa a criar a classe nova.
 
 ## 2. Injeção de dependência
 
@@ -39,25 +39,25 @@ class ClienteRepositorio:
 
 **Solução.** O `main.py` cria os objetos e entrega cada um para quem precisa, pelo construtor.
 
-**Onde está.** `main.py`, `controller.py` e `view.py`.
+**Onde está.** `src/main.py`, `src/controllers/` e `src/views/`.
 
 ```python
-repo_clientes = ClienteRepositorio()
+repo_clientes = ClienteRepositorioMemoria()
 ctrl_clientes = ClienteController(repo_clientes)
-app = JanelaPrincipal(ctrl_clientes, ctrl_quartos)
+app = JanelaPrincipal(ctrl_clientes, ctrl_quartos, stay_ctrl)
 ```
 
 **Decisão de projeto.** Nenhuma classe cria os objetos dos quais depende. Só o `main.py` conhece todas as camadas e liga uma na outra.
 
 ## 3. MVC (Model, View, Controller)
 
-O MVC é também o padrão de arquitetura do sistema. A explicação completa está em [arquitetura.md](arquitetura.md). Aqui está o resumo do que cada camada faz no código.
+O MVC é também o padrão de arquitetura do sistema. A explicação completa está em [Arquitetura.md](Arquitetura.md). Aqui está o resumo do que cada camada faz no código.
 
-| Camada | Arquivo | Responsabilidade |
-|--------|---------|------------------|
-| Model | `model.py` | Classes `Cliente` e `Quarto` e seus repositórios |
-| View | `view.py` | Telas em Tkinter. Mostra dados e recebe cliques |
-| Controller | `controller.py` | Valida os dados da tela e aplica as regras de negócio |
+| Camada | Arquivo/Pasta | Responsabilidade |
+|--------|---------------|------------------|
+| Model | `src/models/` | Classes de domínio (`Cliente`, `Quarto`, etc.) e repositórios |
+| View | `src/views/` | Telas em Tkinter (`JanelaPrincipal`, abas, componentes de formulário) |
+| Controller | `src/controllers/` | Valida os dados da tela e aplica as regras de negócio |
 
 **Regras que o código segue:**
 
@@ -82,5 +82,5 @@ Estes padrões fazem sentido para o sistema, mas ainda não estão no código. P
 | Padrão | Uso possível | Situação |
 |--------|--------------|----------|
 | Observer | Atualizar a lista da tela quando um cadastro muda | Não implementado |
-| Singleton | Uma única conexão com o banco de dados | Será avaliado na etapa do banco |
+| Singleton | Uma única conexão com o banco de dados / AjudanteEstilo | Adotado no estilo / Previsto no banco |
 | Factory | Criar `Atendente` ou `Gerente` conforme o cargo | Será avaliado quando houver funcionários |
