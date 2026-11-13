@@ -15,14 +15,14 @@ class Stay_Repository(Protocol):
     Métodos:
         get_next_id() -> int:
         save(estadia: Guest_Stay) -> None:
-        delete(client_id: int) -> bool:
+        delete(stay_id: int) -> bool:
         get_bill(id_stay: int) -> Optional[Guest_Bill]:
         add_itens_to_bill(id_stay: int, item: Bill_Item) -> None:
         find_by_id(id_query: int) -> Optional[Guest_Stay]:
         find_by_cpf(cpf_query: str) -> Optional[Guest_Stay]:
         get_date_reservations(date: date) -> list[Guest_Stay]:
-        update_room(room: Room) -> bool:
-        update_client(client: Client) -> bool:
+        update_room(id_stay: int, room: Room) -> bool:
+        update_client(id_stay: int, client: Client) -> bool:
         update_room(id_stay: int, room: Room) -> bool:
     '''
 
@@ -33,7 +33,7 @@ class Stay_Repository(Protocol):
     def save(self, estadia: Guest_Stay) -> None:
         ...
     
-    def delete(self, client_id: int) -> bool:
+    def delete(self, stay_id: int) -> bool:
         ...
 
     def get_bill(self, id_stay: int) -> Optional[Guest_Bill]:
@@ -51,8 +51,8 @@ class Stay_Repository(Protocol):
     def get_date_reservations(self, date: date) -> list[Guest_Stay]:
         ... 
 
-    def update_room(self, room: Room) -> bool:
+    def update_room(self, id_stay: int, room: Room) -> bool:
         ...
         
-    def update_client(self, client: Client) -> bool:
+    def update_client(self, id_stay: int, client: Client) -> bool:
         ...

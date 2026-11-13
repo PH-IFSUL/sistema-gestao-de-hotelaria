@@ -9,8 +9,8 @@ class Guest_Bill():
     Returns:
         Objeto do tipo Guest_Bill.
     """
-    def __init__(self, id_stay: int) -> None:
-        self._id_stay: int = id_stay
+    def __init__(self, id_stay: int | None = None) -> None:
+        self._id_stay: int | None = id_stay
         self.__itens: list[Bill_Item] = list()
 
     @property
@@ -37,5 +37,5 @@ class Guest_Bill():
     def calculate_total(self) -> float:
         total = 0.0
         for item in self.__itens:
-            total += item.price * item.quantity
+            total += item.item.price * item.quantity
         return total

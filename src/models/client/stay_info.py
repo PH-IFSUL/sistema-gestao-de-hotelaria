@@ -109,4 +109,4 @@ class Guest_Stay():
         return self.__guest_bill.calculate_total()
     
     def add_item(self, item: Bill_Item) -> None:
-        self.__guest_bill.add_item(item)
+        self.__guest_bill.add_itens(item)
