@@ -29,7 +29,6 @@ class Room_Repository(Protocol):
         ...
         
     def get_types(self) -> List[str]:
-    update(quarto: Room) -> bool:
         ...
         
     
