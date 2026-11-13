@@ -1,0 +1,18 @@
+{
+  "cores": {
+    "COR_FUNDO": "#F5F4F0",
+    "COR_SURFACE": "#FFFFFF",
+    "COR_ACCENT": "#2C5F8A",
+    "COR_ACCENT_DARK": "#1E4266",
+    "COR_TEXTO": "#1A1714",
+    "COR_TEXTO_SOFT": "#6A6460",
+    "COR_BORDA": "#DDDAD4",
+    "COR_ERRO": "#8A2020",
+    "COR_SUCESSO": "#2A6644"
+  },
+  "fontes": {
+    "FONTE_LABEL": ["Segoe UI", 10],
+    "FONTE_LABEL_SM": ["Segoe UI", 9],
+    "FONTE_BOTAO": ["Segoe UI", 10, "bold"]
+  }
+}

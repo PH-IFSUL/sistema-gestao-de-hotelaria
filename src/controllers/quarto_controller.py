@@ -1,0 +1,93 @@
+from models.quarto import Quarto
+from models.database.interfaces.quarto_repositorio_interface import QuartoRepositorio
+
+
+class QuartoController:
+    """
+    Classe para gerenciar os quartos.
+
+    Args:
+        repo: repositório de quartos
+
+    Returns:
+        Objeto do tipo QuartoController.
+    """
+
+    def __init__(self, repo: QuartoRepositorio) -> None:
+        self._repo = repo
+
+    def cadastrar(
+        self,
+        numero_str: str,
+        tipo: str,
+        valor_str: str
+    ) -> str:
+        """
+        Cadastra um novo quarto.
+
+        Args:
+            numero_str: número do quarto
+            tipo: tipo do quarto
+            valor_str: valor da diária do quarto
+
+        Returns:
+            String informando que o quarto foi cadastrado com sucesso.
+        """
+        numero_str = numero_str.strip()
+        valor_str = valor_str.strip().replace(",", ".")
+
+        if not numero_str:
+            raise ValueError("O campo Número é obrigatório.")
+        if not numero_str.isdigit():
+            raise ValueError("Número do quarto deve ser um valor inteiro.")
+        if not tipo:
+            raise ValueError("Selecione um tipo de quarto.")
+        if not valor_str:
+            raise ValueError("O campo Valor da Diária é obrigatório.")
+
+        try:
+            valor = float(valor_str)
+        except ValueError:
+            raise ValueError("Valor da diária deve ser um número (ex: 150.00).")
+
+        if valor <= 0:
+            raise ValueError("Valor da diária deve ser maior que zero.")
+
+        quarto = Quarto(int(numero_str), tipo, valor)
+        self._repo.adicionar(quarto)
+        return f"Quarto {numero_str} ({tipo}) cadastrado com sucesso."
+
+    def listar(self) -> list[Quarto]:
+        """
+        Lista todos os quartos.
+
+        Returns:
+            Lista de quartos.
+        """
+        return self._repo.listar()
+
+    def remover(self, numero_str: str) -> str:
+        """
+        Remove um quarto.
+
+        Args:
+            numero_str: número do quarto
+
+        Returns:
+            String informando que o quarto foi removido com sucesso.
+        """
+        numero_str = numero_str.strip()
+        if not numero_str.isdigit():
+            raise ValueError("Informe um número de quarto válido.")
+        if not self._repo.remover(int(numero_str)):
+            raise ValueError(f"Nenhum quarto encontrado com número {numero_str}.")
+        return f"Quarto {numero_str} removido."
+
+    def obter_nome_estado(self, quarto: Quarto) -> str:
+        """Obtém o nome do estado do quarto."""
+        return quarto.estado.obter_atual()
+
+    def obter_tag_estado(self, quarto: Quarto) -> str:
+        """Obtém a tag do estado do quarto."""
+        return quarto.estado.__str__()
+
