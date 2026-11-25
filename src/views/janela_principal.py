@@ -95,5 +95,12 @@ class JanelaPrincipal(tk.Tk):
         aba_quartos = AbaQuartos(notebook, quarto_ctrl)
         notebook.add(aba_quartos, text="  🛏  Quartos  ")
 
-        # aba_reservas = AbaReservas(notebook, stay_ctrl)
-        # notebook.add(aba_reservas, text="  📖  Reservas  ")
+        aba_reservas = AbaReservas(notebook, stay_ctrl)
+        notebook.add(aba_reservas, text="  📖  Reservas  ")
+
+        def _ao_trocar_aba(_evento):
+            aba_atual = notebook.nametowidget(notebook.select())
+            if hasattr(aba_atual, "_atualizar_lista"):
+                aba_atual._atualizar_lista()
+
+        notebook.bind("<<NotebookTabChanged>>", _ao_trocar_aba)

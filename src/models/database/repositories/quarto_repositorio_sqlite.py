@@ -60,12 +60,25 @@ class QuartoRepositorioSQLite:
             ) from erro
 
     def remover(self, numero_busca: int) -> bool:
+        try:
+            cursor = self._conexao.execute(
+                "DELETE FROM quartos WHERE numero = ?",
+                (numero_busca,),
+            )
+            self._conexao.commit()
+            return cursor.rowcount > 0
+        except sqlite3.IntegrityError as erro:
+            self._conexao.rollback()
+            raise ValueError(
+                f"Não é possível remover o quarto {numero_busca} pois ele possui reservas vinculadas."
+            ) from erro
 
+    def atualizar_estado(self, quarto: Quarto) -> bool:
+        """Persiste o estado atual do quarto no banco de dados."""
         cursor = self._conexao.execute(
-            "DELETE FROM quartos WHERE numero = ?",
-            (numero_busca,),
+            "UPDATE quartos SET estado = ? WHERE numero = ?",
+            (str(quarto.estado), quarto.get_numero()),
         )
-
         self._conexao.commit()
         return cursor.rowcount > 0
 

@@ -25,6 +25,21 @@ CREATE TABLE IF NOT EXISTS quartos (
                     ))
 );
 
+CREATE TABLE IF NOT EXISTS reservas (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    cliente_id      INTEGER NOT NULL REFERENCES clientes(id) ON DELETE RESTRICT,
+    quarto_numero   INTEGER NOT NULL REFERENCES quartos(numero) ON DELETE RESTRICT,
+    data_checkin    TEXT NOT NULL,
+    data_checkout   TEXT NOT NULL,
+    status          TEXT NOT NULL DEFAULT 'CONFIRMADA'
+                    CHECK (status IN ('CONFIRMADA', 'CANCELADA', 'FINALIZADA')),
+    CHECK (data_checkout > data_checkin)
+);
+
+CREATE INDEX IF NOT EXISTS idx_reservas_cliente ON reservas(cliente_id);
+CREATE INDEX IF NOT EXISTS idx_reservas_quarto  ON reservas(quarto_numero);
+CREATE INDEX IF NOT EXISTS idx_reservas_datas   ON reservas(data_checkin, data_checkout);
+
 /*
 
 FUNCIONALIDADES AINDA NÃO CRIADAS / TABELAS AINDA NÃO LOCALIZADAS EM PT-BR

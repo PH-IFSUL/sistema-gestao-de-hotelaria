@@ -39,12 +39,18 @@ class ClienteRepositorioSQLite:
             raise ValueError(f"Não foi possível cadastrar o cliente: {erro}") from erro
 
     def remover(self, cpf_cliente: str) -> bool:
-        cursor = self._conexao.execute(
-            "DELETE FROM clientes WHERE cpf = ?",
-            (cpf_cliente,),
-        )
-        self._conexao.commit()
-        return cursor.rowcount > 0
+        try:
+            cursor = self._conexao.execute(
+                "DELETE FROM clientes WHERE cpf = ?",
+                (cpf_cliente,),
+            )
+            self._conexao.commit()
+            return cursor.rowcount > 0
+        except sqlite3.IntegrityError as erro:
+            self._conexao.rollback()
+            raise ValueError(
+                f"Não é possível remover o cliente com CPF {cpf_cliente} pois ele possui reservas vinculadas."
+            ) from erro
 
     def obter_todos(self) -> list[Cliente]:
         linhas = self._conexao.execute(

@@ -13,6 +13,9 @@ class Reserva:
         hospede: Objeto do cliente/hóspede.
         data_checkin: Data prevista para o check-in.
         data_checkout: Data prevista para o check-out.
+        quarto: Objeto do tipo Quarto reservado (opcional).
+        status: Situação da reserva (padrão: CONFIRMADA).
+        id: Identificador único da reserva (opcional).
 
     Returns:
         Objeto do tipo Reserva.
@@ -22,12 +25,17 @@ class Reserva:
         self,
         hospede: Cliente,
         data_checkin: date,
-        data_checkout: date
+        data_checkout: date,
+        quarto: Quarto | None = None,
+        status: str = "CONFIRMADA",
+        id: int | None = None,
     ) -> None:
-        self._id: int | None = None
+        self._id: int | None = id
         self._hospede: Cliente = hospede
+        self._quarto: Quarto | None = quarto
         self._data_checkin: date = data_checkin
         self._data_checkout: date = data_checkout
+        self._status: str = status
 
     @property
     def id(self) -> int | None:
@@ -46,6 +54,14 @@ class Reserva:
         self._hospede = hospede
 
     @property
+    def quarto(self) -> Quarto | None:
+        return self._quarto
+
+    @quarto.setter
+    def quarto(self, quarto: Quarto | None) -> None:
+        self._quarto = quarto
+
+    @property
     def data_checkin(self) -> date:
         return self._data_checkin
 
@@ -60,6 +76,25 @@ class Reserva:
     @data_checkout.setter
     def data_checkout(self, valor: date) -> None:
         self._data_checkout = valor
+
+    @property
+    def status(self) -> str:
+        return self._status
+
+    @status.setter
+    def status(self, valor: str) -> None:
+        self._status = valor
+
+    def get_numero_diarias(self) -> int:
+        dias = (self._data_checkout - self._data_checkin).days
+        if dias < 1:
+            raise ValueError("A saída deve ser ao menos 1 dia após a entrada.")
+        return dias
+
+    def calcular_total_estimado(self) -> float:
+        if self._quarto is None:
+            return 0.0
+        return self.get_numero_diarias() * self._quarto.get_valor_diaria()
 
 
 class Estadia:
