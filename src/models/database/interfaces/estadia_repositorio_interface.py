@@ -7,7 +7,7 @@ from ...quarto import Quarto
 from ...cliente import Cliente
 from ...estadia import Estadia
 from ...fatura import Fatura
-from ...item import ItemFatura
+from ...item import Item, ItemFatura
 
 
 def obter_proximo_id(repo: "EstadiaRepositorio") -> int:
@@ -19,17 +19,22 @@ class EstadiaRepositorio(Protocol):
     Protocolo que define as operações de persistência para Estadia e Reserva.
     """
 
-    @staticmethod
-    def obter_proximo_id() -> int:
-        ...
-
     def salvar(self, estadia: Estadia) -> None:
         ...
 
-    def remover(self, id_cliente: int) -> bool:
+    def atualizar(self, estadia: Estadia) -> bool:
+        ...
+
+    def remover(self, id_estadia: int) -> bool:
+        ...
+
+    def listar(self) -> List[Estadia]:
         ...
 
     def obter_fatura(self, id_estadia: int) -> Optional[Fatura]:
+        ...
+
+    def listar_itens_catalogo(self) -> List[Item]:
         ...
 
     def adicionar_item_fatura(self, id_estadia: int, item: ItemFatura) -> None:

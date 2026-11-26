@@ -3,10 +3,13 @@ from models.quarto import Quarto
 from models.cliente import Cliente
 from models.estado_quarto import Disponivel
 from models.estadia import Estadia, Reserva
+from models.item import Item, ItemFatura
 from models.database.interfaces.cliente_repositorio_interface import ClienteRepositorio
 from models.database.interfaces.quarto_repositorio_interface import QuartoRepositorio
 from models.database.interfaces.reserva_repositorio_interface import ReservaRepositorio
+from models.database.interfaces.estadia_repositorio_interface import EstadiaRepositorio
 from models.database.repositories.reserva_repositorio_memoria import ReservaRepositorioMemoria
+from models.database.repositories.estadia_repositorio_memoria import EstadiaRepositorioMemoria
 
 
 class EstadiaController:
@@ -19,11 +22,15 @@ class EstadiaController:
         cliente_repo: ClienteRepositorio,
         quarto_repo: QuartoRepositorio,
         reserva_repo: ReservaRepositorio | None = None,
+        estadia_repo: EstadiaRepositorio | None = None,
     ) -> None:
         self._cliente_repo = cliente_repo
         self._quarto_repo = quarto_repo
         self._reserva_repo: ReservaRepositorio = (
             reserva_repo if reserva_repo is not None else ReservaRepositorioMemoria()
+        )
+        self._estadia_repo: EstadiaRepositorio = (
+            estadia_repo if estadia_repo is not None else EstadiaRepositorioMemoria()
         )
 
     def listar_clientes(self, filtro: str = "") -> list[Cliente]:
@@ -182,25 +189,197 @@ class EstadiaController:
     def obter_todas_reservas(self) -> list[Reserva]:
         return self._reserva_repo.listar()
 
-    def adicionar_cliente_estadia(self, estadia: Estadia, cliente: Cliente):
-        pass
+    def listar_reservas_confirmadas(self, filtro: str = "") -> list[Reserva]:
+        """Retorna apenas reservas confirmadas para check-in, com filtro opcional."""
+        termo = filtro.strip().lower()
+        termo_cpf = "".join(ch for ch in termo if ch.isdigit())
+        resultado: list[Reserva] = []
+        for reserva in self._reserva_repo.listar():
+            if reserva.status != "CONFIRMADA":
+                continue
+            if not termo:
+                resultado.append(reserva)
+                continue
+            nome_match = termo in reserva.hospede.get_nome().lower()
+            cpf_match = bool(termo_cpf) and termo_cpf in reserva.hospede.get_cpf()
+            quarto_match = reserva.quarto is not None and termo in str(reserva.quarto.get_numero())
+            if nome_match or cpf_match or quarto_match:
+                resultado.append(reserva)
+        return resultado
 
-    def adicionar_quarto_estadia(self, estadia: Estadia, quarto: Quarto):
-        pass
+    def cadastrar_cliente(
+        self,
+        nome: str,
+        cpf: str,
+        telefone: str,
+        email: str,
+    ) -> Cliente:
+        """Cadastra rapidamente um novo cliente que chega sem reserva."""
+        nome = nome.strip()
+        cpf = "".join(ch for ch in cpf.strip() if ch.isdigit()) if any(c in cpf for c in ".-") else cpf.strip()
+        telefone = telefone.strip()
+        email = email.strip()
 
-    def remover_cliente_estadia(self, estadia: Estadia, cliente: Cliente):
-        pass
+        if not nome:
+            raise ValueError("O campo Nome é obrigatório.")
+        if not cpf:
+            raise ValueError("O campo CPF é obrigatório.")
+        if len(cpf) != 11 or not cpf.isdigit():
+            raise ValueError("CPF deve conter exatamente 11 dígitos numéricos.")
+        if not telefone:
+            raise ValueError("O campo Telefone é obrigatório.")
 
-    def remover_quarto_estadia(self, estadia: Estadia, quarto: Quarto):
-        pass
+        cliente = Cliente(nome, cpf, telefone, email)
+        self._cliente_repo.salvar(cliente)
+        return cliente
 
-    def check_in(self, estadia: Estadia, data_checkin: datetime):
-        pass
+    def realizar_checkin(
+        self,
+        cliente: Cliente | None,
+        quarto: Quarto | None,
+        data_checkout: date,
+        reserva: Reserva | None = None,
+        data_checkin: datetime | None = None,
+    ) -> Estadia:
+        """Realiza o check-in de um hóspede (com reserva ou avulso sem reserva)."""
+        if cliente is None:
+            raise ValueError("Selecione ou cadastre um cliente para a hospedagem.")
+        if quarto is None:
+            raise ValueError("Selecione um quarto para a hospedagem.")
 
-    def check_out(self, estadia: Estadia, data_checkout: datetime):
-        pass
+        checkin_dt = data_checkin if data_checkin is not None else datetime.now()
+        if data_checkout <= checkin_dt.date():
+            raise ValueError("A data de check-out previsto deve ser posterior a hoje.")
 
-    def obter_todas_estadias(self):
-        pass
+        quarto_atual = self._quarto_repo.buscar_por_numero(quarto.get_numero())
+        if quarto_atual is None:
+            raise ValueError(f"Quarto {quarto.get_numero()} não encontrado.")
+
+        estado_atual = quarto_atual.estado.obter_atual()
+
+        if reserva is not None:
+            reserva_atual = self._reserva_repo.buscar_por_id(reserva.id) if reserva.id else None
+            if reserva_atual is None or reserva_atual.status != "CONFIRMADA":
+                raise ValueError("Check-in só pode ser realizado para reservas confirmadas.")
+            if estado_atual not in ("Disponível", "Reservado"):
+                raise ValueError(
+                    f"O quarto {quarto_atual.get_numero()} está '{estado_atual}' e não pode receber check-in."
+                )
+            try:
+                quarto_atual.estado.check_in(quarto_atual)
+            except TypeError as erro:
+                raise ValueError(str(erro)) from erro
+            reserva_atual.status = "FINALIZADA"
+            self._reserva_repo.atualizar(reserva_atual)
+        else:
+            if estado_atual != "Disponível":
+                raise ValueError(
+                    f"O quarto {quarto_atual.get_numero()} está '{estado_atual}'. "
+                    "Hospedagem sem reserva exige quarto disponível."
+                )
+            if self._reserva_repo.existe_conflito(
+                quarto_atual.get_numero(), checkin_dt.date(), data_checkout
+            ):
+                raise ValueError(
+                    f"O quarto {quarto_atual.get_numero()} possui reserva conflitante no período informado."
+                )
+            try:
+                quarto_atual.estado.check_in(quarto_atual)
+            except TypeError as erro:
+                raise ValueError(str(erro)) from erro
+
+        if hasattr(self._quarto_repo, "atualizar_estado"):
+            self._quarto_repo.atualizar_estado(quarto_atual)
+
+        checkout_dt = datetime.combine(data_checkout, checkin_dt.time())
+        estadia = Estadia(
+            hospede=cliente,
+            quarto=quarto_atual,
+            data_checkin=checkin_dt,
+            data_checkout=checkout_dt,
+            status="HOSPEDADO",
+            reserva_id=reserva.id if reserva is not None else None,
+        )
+        self._estadia_repo.salvar(estadia)
+        return estadia
+
+    def realizar_checkout(
+        self,
+        estadia_id: int,
+        data_checkout: datetime | None = None,
+    ) -> Estadia:
+        """Finaliza a estadia, calcula o total e coloca o quarto em limpeza."""
+        estadia = self._estadia_repo.buscar_por_id(estadia_id)
+        if estadia is None:
+            raise ValueError(f"Estadia #{estadia_id} não encontrada.")
+        if estadia.status != "HOSPEDADO":
+            raise ValueError("Esta estadia já foi finalizada.")
+
+        agora = data_checkout if data_checkout is not None else datetime.now()
+        if agora > estadia.data_checkin:
+            estadia.data_checkout = agora
+
+        if estadia.quarto is not None:
+            quarto = self._quarto_repo.buscar_por_numero(estadia.quarto.get_numero())
+            if quarto is not None:
+                if quarto.estado.obter_atual() == "Ocupado":
+                    quarto.estado.check_out(quarto)
+                    if hasattr(self._quarto_repo, "atualizar_estado"):
+                        self._quarto_repo.atualizar_estado(quarto)
+                estadia.quarto = quarto
+
+        estadia.status = "FINALIZADA"
+        self._estadia_repo.atualizar(estadia)
+        return estadia
+
+    def listar_itens_catalogo(self) -> list[Item]:
+        return self._estadia_repo.listar_itens_catalogo()
+
+    def lancar_consumo(
+        self,
+        estadia_id: int,
+        item_id: int,
+        quantidade: int,
+    ) -> Estadia:
+        """Lança um item de consumo na fatura da estadia hospedada."""
+        if quantidade <= 0:
+            raise ValueError("A quantidade deve ser maior que zero.")
+        estadia = self._estadia_repo.buscar_por_id(estadia_id)
+        if estadia is None:
+            raise ValueError(f"Estadia #{estadia_id} não encontrada.")
+        if estadia.status != "HOSPEDADO":
+            raise ValueError("Só é possível lançar consumos em estadias ativas.")
+
+        item = next((i for i in self._estadia_repo.listar_itens_catalogo() if i.id == item_id), None)
+        if item is None:
+            raise ValueError("Selecione um item de consumo válido.")
+
+        item_fatura = ItemFatura(id=0, item=item, quantidade=quantidade)
+        self._estadia_repo.adicionar_item_fatura(estadia_id, item_fatura)
+        atualizada = self._estadia_repo.buscar_por_id(estadia_id)
+        return atualizada if atualizada is not None else estadia
+
+    def remover_estadia(self, estadia_id: int) -> None:
+        """Remove o registro da estadia; se ainda hospedada, libera o quarto."""
+        estadia = self._estadia_repo.buscar_por_id(estadia_id)
+        if estadia is None:
+            raise ValueError(f"Estadia #{estadia_id} não encontrada.")
+
+        numero_quarto = estadia.quarto.get_numero() if estadia.quarto else None
+        estava_hospedado = estadia.status == "HOSPEDADO"
+
+        if not self._estadia_repo.remover(estadia_id):
+            raise ValueError(f"Não foi possível remover a estadia #{estadia_id}.")
+
+        if estava_hospedado and numero_quarto is not None:
+            quarto = self._quarto_repo.buscar_por_numero(numero_quarto)
+            if quarto is not None and quarto.estado.obter_atual() == "Ocupado":
+                quarto.estado.set_estado(Disponivel())
+                if hasattr(self._quarto_repo, "atualizar_estado"):
+                    self._quarto_repo.atualizar_estado(quarto)
+                self._sincronizar_estado_quarto(numero_quarto)
+
+    def obter_todas_estadias(self) -> list[Estadia]:
+        return self._estadia_repo.listar()
 
 

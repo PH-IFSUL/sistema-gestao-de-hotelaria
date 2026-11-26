@@ -40,6 +40,40 @@ CREATE INDEX IF NOT EXISTS idx_reservas_cliente ON reservas(cliente_id);
 CREATE INDEX IF NOT EXISTS idx_reservas_quarto  ON reservas(quarto_numero);
 CREATE INDEX IF NOT EXISTS idx_reservas_datas   ON reservas(data_checkin, data_checkout);
 
+CREATE TABLE IF NOT EXISTS itens (
+    id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome    TEXT NOT NULL UNIQUE,
+    preco   REAL NOT NULL CHECK (preco >= 0)
+);
+
+CREATE TABLE IF NOT EXISTS estadias (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    cliente_id      INTEGER NOT NULL REFERENCES clientes(id) ON DELETE RESTRICT,
+    quarto_numero   INTEGER NOT NULL REFERENCES quartos(numero) ON DELETE RESTRICT,
+    reserva_id      INTEGER REFERENCES reservas(id) ON DELETE SET NULL,
+    data_checkin    TEXT NOT NULL,
+    data_checkout   TEXT NOT NULL,
+    status          TEXT NOT NULL DEFAULT 'HOSPEDADO'
+                    CHECK (status IN ('HOSPEDADO', 'FINALIZADA'))
+);
+
+CREATE TABLE IF NOT EXISTS itens_fatura (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    estadia_id      INTEGER NOT NULL REFERENCES estadias(id) ON DELETE CASCADE,
+    item_id         INTEGER NOT NULL REFERENCES itens(id) ON DELETE RESTRICT,
+    quantidade      INTEGER NOT NULL CHECK (quantidade > 0),
+    preco_unitario  REAL NOT NULL CHECK (preco_unitario >= 0)
+);
+
+CREATE INDEX IF NOT EXISTS idx_estadias_cliente ON estadias(cliente_id);
+CREATE INDEX IF NOT EXISTS idx_estadias_quarto  ON estadias(quarto_numero);
+CREATE INDEX IF NOT EXISTS idx_itens_fatura_estadia ON itens_fatura(estadia_id);
+
+INSERT OR IGNORE INTO itens (nome, preco) VALUES
+    ('Frigobar', 15.00),
+    ('Lavanderia', 30.00),
+    ('Serviço de Quarto', 25.00);
+
 /*
 
 FUNCIONALIDADES AINDA NÃO CRIADAS / TABELAS AINDA NÃO LOCALIZADAS EM PT-BR

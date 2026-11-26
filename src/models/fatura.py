@@ -24,6 +24,16 @@ class Fatura:
     def id_estadia(self, value: int) -> None:
         if not isinstance(value, int):
             raise TypeError("id da estadia deve ser número")
-        if value is None:
-            raise ValueError("id da estadia não pode ser vazio")
         self._id_estadia = value
+
+    def adicionar_item(self, item: ItemFatura) -> None:
+        self._itens.append(item)
+
+    def obter_itens(self) -> list[ItemFatura]:
+        return list(self._itens)
+
+    def calcular_total(self) -> float:
+        return sum(
+            item_fatura.item.preco * item_fatura.quantidade
+            for item_fatura in self._itens
+        )

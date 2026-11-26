@@ -30,22 +30,8 @@ class QuartoRepositorio(Protocol):
         """Retorna os tipos de quartos disponíveis."""
         ...
 
-    # Compatibilidade
-    def add(self, quarto: Quarto) -> None:
-        ...
-
-    def delete(self, number_query: int) -> bool:
-        ...
-
-    def list(self) -> List[Quarto]:
-        ...
-
-    def find_by_number(self, number_query: int) -> Optional[Quarto]:
-        ...
-
-    def get_types(self) -> List[str]:
+    def atualizar_estado(self, quarto: Quarto) -> bool:
+        """Persiste o estado atual do quarto."""
         ...
 
 
-# Alias para compatibilidade
-Room_Repository = QuartoRepositorio

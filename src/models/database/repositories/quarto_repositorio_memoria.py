@@ -38,3 +38,6 @@ class QuartoRepositorioMemoria:
                 tipos.append(quarto.get_tipo())
         return tipos
 
+    def atualizar_estado(self, quarto: Quarto) -> bool:
+        return self.buscar_por_numero(quarto.get_numero()) is not None
+

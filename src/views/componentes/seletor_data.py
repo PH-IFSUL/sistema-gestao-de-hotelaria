@@ -1,7 +1,80 @@
 import calendar
-from datetime import date
+from datetime import date, datetime
 import tkinter as tk
 from ..estilo.constantes import CoresTema, FontesTema
+
+
+class CampoData(tk.Frame):
+    """Campo reutilizável de data (DD/MM/AAAA) com botão de calendário."""
+
+    def __init__(
+        self,
+        pai: tk.Misc,
+        rotulo: str,
+        data_inicial: date | None = None,
+        on_change=None,
+    ) -> None:
+        super().__init__(pai, bg=CoresTema.COR_SURFACE)
+        self._rotulo_limpo = rotulo.replace(" *", "")
+        valor_inicial = (data_inicial or date.today()).strftime("%d/%m/%Y")
+        self.variavel = tk.StringVar(value=valor_inicial)
+        if on_change is not None:
+            self.variavel.trace_add("write", lambda *_: on_change())
+
+        tk.Label(
+            self,
+            text=rotulo,
+            font=FontesTema.FONTE_LABEL_SM,
+            bg=CoresTema.COR_SURFACE,
+            fg=CoresTema.COR_TEXTO_SOFT
+        ).pack(anchor="w")
+
+        linha = tk.Frame(self, bg=CoresTema.COR_SURFACE)
+        linha.pack(fill="x", pady=(2, 0))
+
+        self.entry = tk.Entry(
+            linha,
+            textvariable=self.variavel,
+            width=12,
+            font=FontesTema.FONTE_LABEL,
+            bg=CoresTema.COR_SURFACE,
+            fg=CoresTema.COR_TEXTO,
+            relief="solid",
+            bd=1,
+            highlightthickness=1,
+            highlightbackground=CoresTema.COR_BORDA,
+            highlightcolor=CoresTema.COR_ACCENT
+        )
+        self.entry.pack(side="left", fill="x", expand=True)
+
+        tk.Button(
+            linha,
+            text="📅",
+            command=self._abrir_calendario,
+            bg=CoresTema.COR_FUNDO,
+            fg=CoresTema.COR_TEXTO,
+            font=FontesTema.FONTE_LABEL_SM,
+            relief="flat",
+            cursor="hand2",
+            padx=5,
+            pady=1
+        ).pack(side="left", padx=(4, 0))
+
+    def get(self) -> str:
+        return self.variavel.get()
+
+    def set_data(self, nova_data: date) -> None:
+        self.variavel.set(nova_data.strftime("%d/%m/%Y"))
+
+    def _abrir_calendario(self) -> None:
+        try:
+            atual = datetime.strptime(self.variavel.get().strip(), "%d/%m/%Y").date()
+        except ValueError:
+            atual = date.today()
+        popup = JanelaCalendario(self, atual, titulo=f"Selecionar {self._rotulo_limpo}")
+        self.wait_window(popup)
+        if popup.data_selecionada is not None:
+            self.set_data(popup.data_selecionada)
 
 
 class JanelaCalendario(tk.Toplevel):

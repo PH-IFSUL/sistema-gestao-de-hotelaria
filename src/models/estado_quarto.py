@@ -35,6 +35,9 @@ class EstadoContexto:
     def finalizar_limpeza(self, quarto) -> None:
         self._state.finalizar_limpeza(quarto)
 
+    def iniciar_limpeza(self, quarto) -> None:
+        self._state.iniciar_limpeza(quarto)
+
     def obter_atual(self) -> str:
         return self._state.obter_atual()
 
@@ -76,6 +79,10 @@ class Estado(ABC):
 
     @abstractmethod
     def finalizar_limpeza(self, quarto) -> None:
+        ...
+
+    @abstractmethod
+    def iniciar_limpeza(self, quarto) -> None:
         ...
 
     @abstractmethod
@@ -127,6 +134,9 @@ class Disponivel(Estado):
     def finalizar_limpeza(self, quarto) -> None:
         raise TypeError("Quarto já está Limpo")
 
+    def iniciar_limpeza(self, quarto) -> None:
+        quarto.estado.set_estado(Limpeza())
+
     def obter_atual(self) -> str:
         return "Disponível"
 
@@ -153,6 +163,9 @@ class Reservado(Estado):
         raise TypeError("Quarto está Reservado")
 
     def finalizar_limpeza(self, quarto) -> None:
+        raise TypeError("Quarto está Reservado")
+
+    def iniciar_limpeza(self, quarto) -> None:
         raise TypeError("Quarto está Reservado")
 
     def obter_atual(self) -> str:
@@ -183,6 +196,9 @@ class Ocupado(Estado):
     def finalizar_limpeza(self, quarto) -> None:
         raise TypeError("Quarto está Ocupado")
 
+    def iniciar_limpeza(self, quarto) -> None:
+        raise TypeError("Quarto está Ocupado")
+
     def obter_atual(self) -> str:
         return "Ocupado"
 
@@ -211,6 +227,9 @@ class Limpeza(Estado):
     def finalizar_limpeza(self, quarto) -> None:
         quarto.estado.set_estado(Disponivel())
 
+    def iniciar_limpeza(self, quarto) -> None:
+        raise TypeError("Quarto já está em Limpeza")
+
     def obter_atual(self) -> str:
         return "Em Limpeza"
 
@@ -237,6 +256,9 @@ class Manutencao(Estado):
         quarto.estado.set_estado(Limpeza())
 
     def finalizar_limpeza(self, quarto) -> None:
+        raise TypeError("Quarto está em Manutenção")
+
+    def iniciar_limpeza(self, quarto) -> None:
         raise TypeError("Quarto está em Manutenção")
 
     def obter_atual(self) -> str:

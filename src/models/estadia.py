@@ -116,14 +116,19 @@ class Estadia:
         hospede: Cliente,
         quarto: Quarto | None,
         data_checkin: datetime,
-        data_checkout: datetime
+        data_checkout: datetime,
+        status: str = "HOSPEDADO",
+        reserva_id: int | None = None,
+        id: int | None = None,
     ) -> None:
-        self._id: int | None = None
+        self._id: int | None = id
         self._hospede: Cliente = hospede
         self._quarto: Quarto | None = quarto
         self._data_checkin: datetime = data_checkin
         self._data_checkout: datetime = data_checkout
-        self._fatura: Fatura = Fatura()
+        self._status: str = status
+        self._reserva_id: int | None = reserva_id
+        self._fatura: Fatura = Fatura(id_estadia=id)
 
     @property
     def id(self) -> int | None:
@@ -132,6 +137,7 @@ class Estadia:
     @id.setter
     def id(self, novo_id: int) -> None:
         self._id = novo_id
+        self._fatura.id_estadia = novo_id
 
     @property
     def hospede(self) -> Cliente:
@@ -165,8 +171,36 @@ class Estadia:
     def data_checkout(self) -> datetime:
         return self._data_checkout
 
-    def obter_total(self) -> float:
+    @data_checkout.setter
+    def data_checkout(self, valor: datetime) -> None:
+        self._data_checkout = valor
+
+    @property
+    def status(self) -> str:
+        return self._status
+
+    @status.setter
+    def status(self, valor: str) -> None:
+        self._status = valor
+
+    @property
+    def reserva_id(self) -> int | None:
+        return self._reserva_id
+
+    def get_numero_diarias(self) -> int:
+        dias = (self._data_checkout.date() - self._data_checkin.date()).days
+        return max(1, dias)
+
+    def calcular_total_diarias(self) -> float:
+        if self._quarto is None:
+            return 0.0
+        return self.get_numero_diarias() * self._quarto.get_valor_diaria()
+
+    def calcular_total_consumos(self) -> float:
         return self._fatura.calcular_total()
+
+    def obter_total(self) -> float:
+        return self.calcular_total_diarias() + self.calcular_total_consumos()
 
     def adicionar_item(self, item: ItemFatura) -> None:
         self._fatura.adicionar_item(item)

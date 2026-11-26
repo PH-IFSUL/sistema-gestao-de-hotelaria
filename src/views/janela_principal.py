@@ -6,6 +6,7 @@ from controllers.estadia_controller import EstadiaController
 from .aba_clientes import AbaClientes
 from .aba_quartos import AbaQuartos
 from .aba_reservas import AbaReservas
+from .aba_estadias import AbaEstadias
 from .estilo.constantes import CoresTema, FontesTema
 
 
@@ -56,8 +57,8 @@ class JanelaPrincipal(tk.Tk):
     ):
         super().__init__()
         self.title("Sistema de Gestão de Hotel")
-        self.geometry("820x520")
-        self.minsize(720, 480)
+        self.geometry("820x600")
+        self.minsize(720, 600)
         self.configure(bg=CoresTema.COR_FUNDO)
         _configurar_estilo()
         self._construir(cliente_ctrl, quarto_ctrl, stay_ctrl)
@@ -80,7 +81,7 @@ class JanelaPrincipal(tk.Tk):
         ).pack(side="left", padx=16, pady=12)
         tk.Label(
             header,
-            text="Protótipo MVC · Tkinter",
+            text="versão 1.0",
             font=FontesTema.FONTE_LABEL_SM,
             bg=CoresTema.COR_ACCENT,
             fg="#A8C8E8"
@@ -97,6 +98,9 @@ class JanelaPrincipal(tk.Tk):
 
         aba_reservas = AbaReservas(notebook, stay_ctrl)
         notebook.add(aba_reservas, text="  📖  Reservas  ")
+
+        aba_estadias = AbaEstadias(notebook, stay_ctrl)
+        notebook.add(aba_estadias, text="  🔑  Estadias  ")
 
         def _ao_trocar_aba(_evento):
             aba_atual = notebook.nametowidget(notebook.select())
