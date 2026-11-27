@@ -71,13 +71,14 @@ O protótipo organiza o código em três pacotes principais dentro de `src/`.
 | Domínio | Model (`Cliente`, `Quarto`, `Estadia`, etc.) |
 | Persistência | Model (`ClienteRepositorioMemoria`, `QuartoRepositorioMemoria`) |
 
-No protótipo, o Controller faz o papel da camada de Serviços. Os repositórios guardam os dados em memória e ficam em `src/models/database/repositories/`. Quando o banco de dados for ligado, os repositórios passam a gravar no banco relacional. Os outros arquivos não mudam.
+No protótipo, o Controller faz o papel da camada de Serviços. Os repositórios guardam os dados em memória e ficam em `src/models/database/repositories/`. Quando o banco de dados for ligado, novas classes de repositório passam a gravar no SQLite. Elas seguem as mesmas interfaces. Os outros arquivos não mudam.
 
 ### Regras do MVC no código
 
 - A View chama somente o Controller.
 - O Controller não usa Tkinter.
 - O Model não conhece a View nem o Controller.
+- O Controller usa a interface do repositório, não a implementação.
 - O Controller envia os erros de regra de negócio como `ValueError`. A View mostra a mensagem.
 
 ## 3. Como as camadas se comunicam
@@ -101,8 +102,8 @@ O atendente fala somente com a View. Os dados ficam no repositório. Nenhuma out
 |------|--------|
 | MVC no protótipo | Implementado para clientes e quartos |
 | Persistência em memória | Implementada |
-| Persistência em banco de dados | Será feita na próxima etapa |
-| Reservas, hospedagens e faturas | Modeladas e preparadas para expansão das telas |
+| Persistência em banco de dados | SQLite, na próxima etapa |
+| Reservas, estadias e faturas | [escolha a opção verdadeira, veja abaixo] |
 
 ## Decisões de arquitetura
 
@@ -112,3 +113,4 @@ O atendente fala somente com a View. Os dados ficam no repositório. Nenhuma out
 | MVC no protótipo | A interface em Tkinter se encaixa bem no MVC | MVP e MVVM, que são mais complexos |
 | Aplicação em um só programa | O sistema é pequeno | Microsserviços |
 | Repositórios separados do domínio | Facilita a troca da memória pelo banco | Gravar direto no banco dentro do controller |
+| Interface do repositório com `Protocol` | O controller depende do contrato, não da implementação | O controller usar a classe de memória direto |
