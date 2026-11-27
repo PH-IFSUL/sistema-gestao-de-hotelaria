@@ -7,57 +7,69 @@ graph TD
 
     subgraph VIEW["View - src/views"]
         JP["JanelaPrincipal"]
-        ABAS["Abas: clientes, quartos e estadias"]
+        ABAS["Abas: clientes, quartos, reservas e estadias"]
         EST["AjudanteEstilo (Singleton)"]
     end
 
     subgraph CTRL["Controller - src/controllers"]
         CC["ClienteController"]
         QC["QuartoController"]
-        SC["StayController"]
+        EC["EstadiaController"]
     end
 
     subgraph DOM["Model: domínio - src/models"]
         CL["Cliente"]
         QU["Quarto com estados (State)"]
-        ES["Estadia e conta do hóspede"]
+        ES["Reserva, Estadia, Fatura e Item"]
     end
 
     subgraph INT["Model: interfaces - database/interfaces"]
         ICR["ClienteRepositorio"]
         IQR["QuartoRepositorio"]
-        ISR["Repositório de estadias"]
+        IRR["ReservaRepositorio"]
+        IER["EstadiaRepositorio"]
     end
 
     subgraph IMP["Model: implementações - database/repositories"]
-        CRM["ClienteRepositorioMemoria"]
-        QRM["QuartoRepositorioMemoria"]
-        SQL["Repositórios SQLite (previsto)"]
+        MEM["Repositórios em memória"]
+        SQL["Repositórios SQLite"]
     end
 
-    DB[("SQLite (previsto)")]
+    CON["ConexaoBanco"]
+    DB[("SQLite - hotelaria.db")]
 
     U --> JP
     JP --> ABAS
     ABAS -.-> EST
     ABAS --> CC
     ABAS --> QC
-    ABAS --> SC
+    ABAS --> EC
 
     CC --> CL
     QC --> QU
-    SC --> ES
+    EC --> ES
     CC --> ICR
     QC --> IQR
-    SC --> ISR
+    EC --> ICR
+    EC --> IQR
+    EC --> IRR
+    EC --> IER
 
-    CRM -. implementa .-> ICR
-    QRM -. implementa .-> IQR
+    MEM -. implementa .-> ICR
+    MEM -. implementa .-> IQR
+    MEM -. implementa .-> IRR
+    MEM -. implementa .-> IER
     SQL -. implementa .-> ICR
     SQL -. implementa .-> IQR
-    SQL --> DB
+    SQL -. implementa .-> IRR
+    SQL -. implementa .-> IER
+    SQL --> CON
+    CON --> DB
 
-    MAIN -. injeta .-> JP
-    MAIN -. injeta .-> CC
-    MAIN -. injeta .-> CRM
+    MAIN -. cria .-> CON
+    MAIN -. cria .-> SQL
+    MAIN -. injeta repositórios .-> CC
+    MAIN -. injeta repositórios .-> QC
+    MAIN -. injeta repositórios .-> EC
+    MAIN -. injeta controllers .-> JP
 ```
