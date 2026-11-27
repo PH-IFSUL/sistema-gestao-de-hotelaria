@@ -102,7 +102,7 @@ O atendente fala somente com a View. Os dados ficam no repositório. Nenhuma out
 |------|--------|
 | MVC | Implementado para clientes, quartos, reservas e estadias |
 | Persistência em banco de dados | Implementada com SQLite (`src/models/database/`) |
-| Persistência em memória | Mantida como alternativa, usada para testes |
+| Persistência em memória | Mantida como alternativa. O `main.py` usa o SQLite |
 | Reservas, estadias e faturas | Implementadas com controller, tela e banco |
 
 ## Decisões de arquitetura
