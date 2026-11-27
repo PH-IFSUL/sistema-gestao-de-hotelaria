@@ -14,7 +14,7 @@ O projeto segue uma arquitetura em camadas e o o pattern **MVC** para garantir a
 | **Controller** | Intermediação entre Model e View | `src/controllers/` |
 | **Model** | Lógica de negócio e acesso a dados | `src/models/` |
 
-**Para visualizar detalhes da arquitetura acesse:** [Detalhes da Arquitetura](docs/Arquitetura.md)
+**Para visualizar detalhes da arquitetura acesse:** [Padrões de Arquitetura](docs/padroes_de_arquitetura.md)
 
 ## Instruções para execução:
 
