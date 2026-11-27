@@ -53,7 +53,7 @@ app = JanelaPrincipal(ctrl_clientes, ctrl_quartos, stay_ctrl)
 
 ## 3. MVC (Model, View, Controller)
 
-O MVC é também o padrão de arquitetura do sistema. A explicação completa está em [Arquitetura.md](Arquitetura.md). Aqui está o resumo do que cada camada faz no código.
+O MVC é também o padrão de arquitetura do sistema. A explicação completa está em [Padrões de Arquitetura](padroes_de_arquitetura.md). Aqui está o resumo do que cada camada faz no código.
 
 | Camada | Arquivo/Pasta | Responsabilidade |
 |--------|---------------|------------------|
