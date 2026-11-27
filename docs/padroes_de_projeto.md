@@ -9,6 +9,8 @@ Este documento descreve os padrões de projeto usados no protótipo do Sistema d
 | Repository | `src/models/database/` | Separar o armazenamento dos dados do resto do sistema |
 | Injeção de dependência | `src/main.py` | Entregar a cada classe os objetos de que ela precisa |
 | MVC | `src/models/`, `src/views/`, `src/controllers/` | Separar dados, regras e tela |
+| State | [caminho do estado do quarto] | Controlar o que cada situação do quarto permite |
+| Singleton | [caminho do AjudanteEstilo] | Ter uma só instância dos estilos da tela |
 
 ## 1. Repository
 
@@ -77,10 +79,28 @@ O MVC é também o padrão de arquitetura do sistema. A explicação completa es
 
 ## Padrões estudados e não adotados
 
-Estes padrões fazem sentido para o sistema, mas ainda não estão no código. Por isso não fazem parte da implementação atual.
+Estes padrões fazem sentido para o sistema, mas ainda não estão no código.
 
 | Padrão | Uso possível | Situação |
 |--------|--------------|----------|
 | Observer | Atualizar a lista da tela quando um cadastro muda | Não implementado |
-| Singleton | Uma única conexão com o banco de dados / AjudanteEstilo | Adotado no estilo / Previsto no banco |
+| Singleton (conexão com o banco) | Uma única conexão com o SQLite | Previsto para a etapa do banco |
 | Factory | Criar `Atendente` ou `Gerente` conforme o cargo | Será avaliado quando houver funcionários |
+
+## 4. State
+
+**Problema.** Um quarto age de forma diferente em cada situação. Não é permitido fazer check-in em um quarto em manutenção. Sem o padrão, o código teria `if` em muitos lugares.
+
+**Solução.** Cada situação do quarto é uma classe: disponível, reservado, ocupado, limpeza e manutenção. O quarto guarda o estado atual e repassa cada operação para ele. O estado recusa a operação que não é permitida.
+
+**Onde está.** [caminho das classes de estado]
+
+**Decisão de projeto.** A regra "o que é permitido em cada situação" fica nas classes de estado. O controller chama a operação e mostra o erro para o usuário.
+
+## 5. Singleton
+
+**Problema.** Os estilos da tela devem ser iguais em todas as abas. Criar o estilo várias vezes gera repetição.
+
+**Solução.** A classe `AjudanteEstilo` tem uma só instância. Todas as telas usam essa instância.
+
+**Onde está.** [caminho do AjudanteEstilo]
