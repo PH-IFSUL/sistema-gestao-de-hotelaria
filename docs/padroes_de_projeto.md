@@ -9,16 +9,16 @@ Este documento descreve os padrões de projeto usados no protótipo do Sistema d
 | Repository | `src/models/database/` | Separar o armazenamento dos dados do resto do sistema |
 | Injeção de dependência | `src/main.py` | Entregar a cada classe os objetos de que ela precisa |
 | MVC | `src/models/`, `src/views/`, `src/controllers/` | Separar dados, regras e tela |
-| State | [caminho do estado do quarto] | Controlar o que cada situação do quarto permite |
-| Singleton | [caminho do AjudanteEstilo] | Ter uma só instância dos estilos da tela |
+| State | `src/models/estado_quarto.py` | Controlar o que cada situação do quarto permite |
+| Singleton | `src/views/estilo/ajudante_estilo.py` | Ter uma só instância dos estilos da tela |
 
 ## 1. Repository
 
-**Problema.** O sistema precisa guardar clientes e quartos. Hoje os dados ficam em memória. Mais tarde eles vão para o banco de dados. O restante do código não deve mudar quando isso acontecer.
+**Problema.** O sistema precisa guardar clientes, quartos, reservas e estadias. O armazenamento pode mudar, de memória para banco de dados. O restante do código não deve mudar quando isso acontecer.
 
 **Solução.** Cada entidade tem uma classe de repositório com interface definida via `Protocol`. Só essa classe sabe como os dados são guardados. As outras classes usam os métodos `salvar`, `listar`, `buscar` e `remover`.
 
-**Onde está.** `ClienteRepositorio` e `QuartoRepositorio` em `src/models/database/interfaces/`, com implementações concretas `ClienteRepositorioMemoria` e `QuartoRepositorioMemoria` em `src/models/database/repositories/`.
+**Onde está.** As interfaces `ClienteRepositorio`, `QuartoRepositorio`, `ReservaRepositorio` e `EstadiaRepositorio` ficam em `src/models/database/interfaces/`. As implementações ficam em `src/models/database/repositories/`: uma versão em memória (`...Memoria`) e uma versão SQLite (`...SQLite`) para cada interface.
 
 ```python
 class ClienteRepositorioMemoria:
@@ -33,7 +33,7 @@ class ClienteRepositorioMemoria:
 
 **Decisão de projeto.** A regra "o CPF é único" e a regra "o número do quarto é único" ficam dentro do repositório. Assim, nenhum caminho do sistema consegue gravar um dado repetido.
 
-**Como trocar para o banco de dados.** Criar uma classe nova, por exemplo `ClienteRepositorioSQLite`, implementando a mesma interface `ClienteRepositorio`. O controller e a view não mudam. Só o `main.py` passa a criar a classe nova.
+**Como a troca foi feita.** A classe `ClienteRepositorioSQLite` implementa a mesma interface `ClienteRepositorio`. O controller e a view não mudaram. Só o `main.py` passou a criar a classe nova.
 
 ## 2. Injeção de dependência
 
@@ -44,9 +44,10 @@ class ClienteRepositorioMemoria:
 **Onde está.** `src/main.py`, `src/controllers/` e `src/views/`.
 
 ```python
-repo_clientes = ClienteRepositorioMemoria()
+banco = ConexaoBanco()
+repo_clientes = ClienteRepositorioSQLite(banco)
 ctrl_clientes = ClienteController(repo_clientes)
-app = JanelaPrincipal(ctrl_clientes, ctrl_quartos, stay_ctrl)
+app = JanelaPrincipal(ctrl_clientes, ctrl_quartos, ctrl_estadias)
 ```
 
 **Decisão de projeto.** Nenhuma classe cria os objetos dos quais depende. Só o `main.py` conhece todas as camadas e liga uma na outra.
@@ -63,7 +64,7 @@ O MVC é também o padrão de arquitetura do sistema. A explicação completa es
 
 **Regras que o código segue:**
 
-- A view chama apenas o controller. Ela não usa o model diretamente.
+- A view chama o controller para buscar dados e executar ações.
 - O controller não usa Tkinter.
 - O model não conhece a view nem o controller.
 - Erros de regra de negócio saem do controller como `ValueError`. A view mostra a mensagem para o usuário.
@@ -72,7 +73,7 @@ O MVC é também o padrão de arquitetura do sistema. A explicação completa es
 
 | Decisão | Motivo | Alternativa descartada |
 |---------|--------|------------------------|
-| Guardar os dados em memória no protótipo | Entrega rápida da primeira versão | Banco de dados já no protótipo |
+| Gravar os dados no SQLite | Os dados não se perdem ao fechar o sistema (RNF05) | Guardar só em memória |
 | Usar repositórios em vez de listas soltas | Facilita a troca para o banco | Lista dentro do controller |
 | Validar os campos no controller | A view fica simples | Validar dentro de cada tela |
 | Atributos privados com métodos `get_` | Encapsulamento | Atributos públicos |
@@ -84,7 +85,6 @@ Estes padrões fazem sentido para o sistema, mas ainda não estão no código.
 | Padrão | Uso possível | Situação |
 |--------|--------------|----------|
 | Observer | Atualizar a lista da tela quando um cadastro muda | Não implementado |
-| Singleton (conexão com o banco) | Uma única conexão com o SQLite | Previsto para a etapa do banco |
 | Factory | Criar `Atendente` ou `Gerente` conforme o cargo | Será avaliado quando houver funcionários |
 
 ## 4. State
@@ -93,7 +93,7 @@ Estes padrões fazem sentido para o sistema, mas ainda não estão no código.
 
 **Solução.** Cada situação do quarto é uma classe: disponível, reservado, ocupado, limpeza e manutenção. O quarto guarda o estado atual e repassa cada operação para ele. O estado recusa a operação que não é permitida.
 
-**Onde está.** [caminho das classes de estado]
+**Onde está.** `src/models/estado_quarto.py` (`EstadoContexto`, `Estado`, `Disponivel`, `Reservado`, `Ocupado`, `Limpeza`, `Manutencao`).
 
 **Decisão de projeto.** A regra "o que é permitido em cada situação" fica nas classes de estado. O controller chama a operação e mostra o erro para o usuário.
 
@@ -103,4 +103,4 @@ Estes padrões fazem sentido para o sistema, mas ainda não estão no código.
 
 **Solução.** A classe `AjudanteEstilo` tem uma só instância. Todas as telas usam essa instância.
 
-**Onde está.** [caminho do AjudanteEstilo]
+**Onde está.** `src/views/estilo/ajudante_estilo.py`. O método `__new__` devolve sempre a mesma instância.
