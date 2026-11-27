@@ -39,11 +39,16 @@ classDiagram
         class Reserva {
             -_id : int | None
             -_hospede : Cliente
+            -_quarto : Quarto
             -_data_checkin : date
             -_data_checkout : date
+            -_status : str
             +hospede : Cliente
+            +quarto : Quarto
             +data_checkin : date
             +data_checkout : date
+            +get_numero_diarias() int
++           +calcular_total_estimado() float
         }
 
         class Estadia {
@@ -52,7 +57,12 @@ classDiagram
             -_quarto : Quarto
             -_data_checkin : datetime
             -_data_checkout : datetime
+            -_status : str
+            -_reserva_id : int | None
             -_fatura : Fatura
+            +get_numero_diarias() int
+            +calcular_total_diarias() float
+            +calcular_total_consumos() float
             +obter_total() float
             +adicionar_item(item: ItemFatura) void
         }
@@ -147,16 +157,6 @@ classDiagram
             +atualizar(cliente: Cliente)* bool
         }
 
-        class ClienteRepositorioMemoria {
-            -_clientes : list~Cliente~
-            -_proximo_id : int
-            +salvar(cliente: Cliente) void
-            +remover(cpf_cliente: str) bool
-            +obter_todos() list~Cliente~
-            +buscar_por_id(id_busca: int) Cliente
-            +buscar_por_cpf(cpf_busca: str) Cliente
-        }
-
         class QuartoRepositorio {
             <<interface>>
             +adicionar(quarto: Quarto)* void
@@ -164,27 +164,47 @@ classDiagram
             +listar()* list~Quarto~
             +buscar_por_numero(numero_busca: int)* Quarto
             +obter_tipos()* list~str~
+            +atualizar_estado(quarto: Quarto)* bool
         }
 
-        class QuartoRepositorioMemoria {
-            -_quartos : list~Quarto~
-            +adicionar(quarto: Quarto) void
-            +remover(numero_busca: int) bool
-            +listar() list~Quarto~
-            +buscar_por_numero(numero_busca: int) Quarto
-            +obter_tipos() list~str~
+        class ReservaRepositorio {
+            <<interface>>
+            +salvar(reserva: Reserva)* void
+            +atualizar(reserva: Reserva)* bool
+            +remover(id_reserva: int)* bool
+            +listar()* list~Reserva~
+            +buscar_por_id(id_reserva: int)* Reserva
+            +existe_conflito(numero_quarto: int, data_inicio: date, data_fim: date, ignorar_id: int)* bool
         }
 
         class EstadiaRepositorio {
             <<interface>>
-            +obter_proximo_id()* int
             +salvar(estadia: Estadia)* void
-            +remover(id_cliente: int)* bool
-            +obter_fatura(id_estadia: int)* Fatura
-            +adicionar_item_fatura(id_estadia: int, item: ItemFatura)* void
+            +atualizar(estadia: Estadia)* bool
+            +remover(id_estadia: int)* bool
+            +listar()* list~Estadia~
             +buscar_por_id(id_busca: int)* Estadia
-            +buscar_por_cpf(cpf_busca: str)* Estadia
-            +obter_reservas_por_data(data: date)* list~Estadia~
+            +obter_fatura(id_estadia: int)* Fatura
+            +listar_itens_catalogo()* list~Item~
+            +adicionar_item_fatura(id_estadia: int, item: ItemFatura)* void
+        }
+
+        class ClienteRepositorioMemoria
+        class QuartoRepositorioMemoria
+        class ReservaRepositorioMemoria
+        class EstadiaRepositorioMemoria
+
+        class ClienteRepositorioSQLite
+        class QuartoRepositorioSQLite
+        class ReservaRepositorioSQLite
+        class EstadiaRepositorioSQLite
+
+        class ConexaoBanco {
+            -_caminho : str
+            -_conexao : Connection
+            +conectar() Connection
+            +obter_conexao() Connection
+            +fechar() void
         }
     }
 
@@ -203,27 +223,37 @@ classDiagram
             +remover(numero_str: str) str
             +obter_nome_estado(quarto: Quarto) str
             +obter_tag_estado(quarto: Quarto) str
+            +alterar_estado(numero_str: str, novo_estado: str) str
         }
 
         class EstadiaController {
             -_cliente_repo : ClienteRepositorio
             -_quarto_repo : QuartoRepositorio
-            +realizar_reserva(cliente: Cliente, quarto: Quarto, data_inicio: date, data_fim: date) void
-            +adicionar_cliente_estadia(estadia: Estadia, cliente: Cliente) void
-            +adicionar_quarto_estadia(estadia: Estadia, quarto: Quarto) void
-            +remover_cliente_estadia(estadia: Estadia, cliente: Cliente) void
-            +remover_quarto_estadia(estadia: Estadia, quarto: Quarto) void
-            +check_in(estadia: Estadia, data_checkin: datetime) void
-            +check_out(estadia: Estadia, data_checkout: datetime) void
-            +obter_todas_estadias() void
-            +obter_todas_reservas() void
+            -_reserva_repo : ReservaRepositorio
+            -_estadia_repo : EstadiaRepositorio
+            +listar_clientes(filtro: str) list~Cliente~
+            +listar_quartos(filtro: str, apenas_disponiveis: bool) list~Quarto~
+            +cadastrar_cliente(nome: str, cpf: str, telefone: str, email: str) Cliente
+            +realizar_reserva(cliente: Cliente, quarto: Quarto, data_inicio: date, data_fim: date) Reserva
+            +alterar_reserva(reserva_id: int, cliente: Cliente, quarto: Quarto, data_inicio: date, data_fim: date) Reserva
+            +remover_reserva(reserva_id: int) void
+            +obter_todas_reservas() list~Reserva~
+            +listar_reservas_confirmadas(filtro: str) list~Reserva~
+            +realizar_checkin(cliente: Cliente, quarto: Quarto, data_checkout: date, reserva: Reserva, data_checkin: datetime) Estadia
+            +realizar_checkout(estadia_id: int, data_checkout: datetime) Estadia
+            +listar_itens_catalogo() list~Item~
+            +lancar_consumo(estadia_id: int, item_id: int, quantidade: int) Estadia
+            +remover_estadia(estadia_id: int) void
+            +obter_todas_estadias() list~Estadia~
         }
     }
 
     %% Relacionamentos do Domínio
     Reserva "0..*" --o "1" Cliente : reserva para
+    Reserva "0..*" --> "1" Quarto : reserva
     Estadia "0..*" --o "1" Cliente : hóspede
     Estadia "0..*" --o "0..1" Quarto : alocado em
+    Estadia ..> Reserva : origem opcional
     Estadia "1" *-- "1" Fatura : possui
     Fatura "1" *-- "0..*" ItemFatura : contém
     ItemFatura "0..*" --o "1" Item : refere-se a
@@ -240,10 +270,22 @@ classDiagram
     %% Relacionamentos de Repositórios
     ClienteRepositorio <|.. ClienteRepositorioMemoria : realiza
     QuartoRepositorio <|.. QuartoRepositorioMemoria : realiza
+    ReservaRepositorio <|.. ReservaRepositorioMemoria : realiza
+    EstadiaRepositorio <|.. EstadiaRepositorioMemoria : realiza
+    ClienteRepositorio <|.. ClienteRepositorioSQLite : realiza
+    QuartoRepositorio <|.. QuartoRepositorioSQLite : realiza
+    ReservaRepositorio <|.. ReservaRepositorioSQLite : realiza
+    EstadiaRepositorio <|.. EstadiaRepositorioSQLite : realiza
+    ClienteRepositorioSQLite --> ConexaoBanco : usa
+    QuartoRepositorioSQLite --> ConexaoBanco : usa
+    ReservaRepositorioSQLite --> ConexaoBanco : usa
+    EstadiaRepositorioSQLite --> ConexaoBanco : usa
 
     %% Relacionamentos de Controllers
     ClienteController "1" --> "1" ClienteRepositorio : utiliza
     QuartoController "1" --> "1" QuartoRepositorio : utiliza
     EstadiaController "1" --> "1" ClienteRepositorio : utiliza
     EstadiaController "1" --> "1" QuartoRepositorio : utiliza
+    EstadiaController "1" --> "1" ReservaRepositorio : utiliza
+    EstadiaController "1" --> "1" EstadiaRepositorio : utiliza
 ```
