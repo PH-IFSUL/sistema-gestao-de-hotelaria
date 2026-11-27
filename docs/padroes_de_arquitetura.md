@@ -29,8 +29,8 @@ O sistema tem quatro camadas. Cada camada usa somente a camada que está logo ab
 
 | Camada | O que faz | Exemplos |
 |--------|-----------|----------|
-| Apresentação | Mostra dados e recebe as ações do atendente | Telas de cliente e de quarto |
-| Serviços | Valida os dados e executa os casos de uso | Cadastrar cliente, cadastrar quarto |
+| Apresentação | Mostra dados e recebe as ações do atendente | Telas de clientes, quartos, reservas e estadias |
+| Serviços | Valida os dados e executa os casos de uso | Cadastrar cliente, reservar quarto, fazer check-in e check-out |
 | Domínio | Guarda os dados e o comportamento de cada entidade | `Cliente`, `Quarto`, `Estadia`, `Reserva`, `Fatura`, `Item` |
 | Persistência | Grava e busca os dados | `ClienteRepositorio`, `QuartoRepositorio`, `EstadiaRepositorio` |
 
@@ -69,13 +69,13 @@ O protótipo organiza o código em três pacotes principais dentro de `src/`.
 | Apresentação | View (`src/views/`) |
 | Serviços | Controller (`src/controllers/`) |
 | Domínio | Model (`Cliente`, `Quarto`, `Estadia`, etc.) |
-| Persistência | Model (`ClienteRepositorioMemoria`, `QuartoRepositorioMemoria`) |
+| Persistência | Model (repositórios SQLite e `ConexaoBanco`) |
 
-No protótipo, o Controller faz o papel da camada de Serviços. Os repositórios guardam os dados em memória e ficam em `src/models/database/repositories/`. Quando o banco de dados for ligado, novas classes de repositório passam a gravar no SQLite. Elas seguem as mesmas interfaces. Os outros arquivos não mudam.
+No sistema, o Controller faz o papel da camada de Serviços. Os repositórios gravam os dados no SQLite e ficam em `src/models/database/repositories/`. A classe `ConexaoBanco` abre o banco e cria as tabelas a partir do `schema.sql`. Também existem repositórios em memória. Eles seguem as mesmas interfaces, então o `main.py` troca um pelo outro sem mudar o resto.
 
 ### Regras do MVC no código
 
-- A View chama somente o Controller.
+- A View chama o Controller para buscar dados e executar ações.
 - O Controller não usa Tkinter.
 - O Model não conhece a View nem o Controller.
 - O Controller usa a interface do repositório, não a implementação.
@@ -100,10 +100,10 @@ O atendente fala somente com a View. Os dados ficam no repositório. Nenhuma out
 
 | Item | Estado |
 |------|--------|
-| MVC no protótipo | Implementado para clientes e quartos |
-| Persistência em memória | Implementada |
-| Persistência em banco de dados | SQLite, na próxima etapa |
-| Reservas, estadias e faturas | [escolha a opção verdadeira, veja abaixo] |
+| MVC | Implementado para clientes, quartos, reservas e estadias |
+| Persistência em banco de dados | Implementada com SQLite (`src/models/database/`) |
+| Persistência em memória | Mantida como alternativa, usada para testes |
+| Reservas, estadias e faturas | Implementadas com controller, tela e banco |
 
 ## Decisões de arquitetura
 
