@@ -1,70 +1,63 @@
-# Diagrama de Componentes:
+# Diagrama de Componentes
 
 ```mermaid
 graph TD
+    U["Atendente"]
+    MAIN["main.py (cria e liga os objetos)"]
 
-    subgraph USUARIO["👤 Usuário (Funcionário)"]
-        U[Recepcionista / Gerente]
+    subgraph VIEW["View - src/views"]
+        JP["JanelaPrincipal"]
+        ABAS["Abas: clientes, quartos e estadias"]
+        EST["AjudanteEstilo (Singleton)"]
     end
 
-    subgraph L1["Camada de Apresentação"]
-        MENU["Menu Principal (SistemaHotel)"]
-        TELAS["Telas / Formulários (View)"]
+    subgraph CTRL["Controller - src/controllers"]
+        CC["ClienteController"]
+        QC["QuartoController"]
+        SC["StayController"]
     end
 
-    subgraph L2["Camada de Serviços"]
-        CS["ClienteService"]
-        RS["ReservaService"]
-        HS["HospedagemService"]
-        PS["PagamentoService"]
-    end
-
-    subgraph L3["Camada de Domínio"]
+    subgraph DOM["Model: domínio - src/models"]
         CL["Cliente"]
-        FU["Funcionario (Recepcionista | Gerente)"]
-        QU["Quarto / TipoQuarto"]
-        RE["Reserva (StatusReserva)"]
-        HO["Hospedagem / ServicoExtra"]
-        PG["Pagamento (FormaPagamento)"]
+        QU["Quarto com estados (State)"]
+        ES["Estadia e conta do hóspede"]
     end
 
-    subgraph L4["Camada de Persistência"]
-        CDAO["ClienteDAO"]
-        QDAO["QuartoDAO"]
-        RDAO["ReservaDAO"]
-        HDAO["HospedagemDAO"]
-        PDAO["PagamentoDAO"]
+    subgraph INT["Model: interfaces - database/interfaces"]
+        ICR["ClienteRepositorio"]
+        IQR["QuartoRepositorio"]
+        ISR["Repositório de estadias"]
     end
 
-    subgraph BD["🗄️ Banco de Dados"]
-        DB[(Hotel DB)]
+    subgraph IMP["Model: implementações - database/repositories"]
+        CRM["ClienteRepositorioMemoria"]
+        QRM["QuartoRepositorioMemoria"]
+        SQL["Repositórios SQLite (previsto)"]
     end
 
-    U --> MENU
-    MENU --> TELAS
-    TELAS --> CS
-    TELAS --> RS
-    TELAS --> HS
-    TELAS --> PS
+    DB[("SQLite (previsto)")]
 
-    CS --> CL
-    RS --> RE
-    RS --> QU
-    RS --> CL
-    HS --> HO
-    HS --> RE
-    HS --> FU
-    PS --> PG
+    U --> JP
+    JP --> ABAS
+    ABAS -.-> EST
+    ABAS --> CC
+    ABAS --> QC
+    ABAS --> SC
 
-    CS --> CDAO
-    RS --> RDAO
-    RS --> QDAO
-    HS --> HDAO
-    PS --> PDAO
+    CC --> CL
+    QC --> QU
+    SC --> ES
+    CC --> ICR
+    QC --> IQR
+    SC --> ISR
 
-    CDAO --> DB
-    QDAO --> DB
-    RDAO --> DB
-    HDAO --> DB
-    PDAO --> DB
+    CRM -. implementa .-> ICR
+    QRM -. implementa .-> IQR
+    SQL -. implementa .-> ICR
+    SQL -. implementa .-> IQR
+    SQL --> DB
+
+    MAIN -. injeta .-> JP
+    MAIN -. injeta .-> CC
+    MAIN -. injeta .-> CRM
 ```
