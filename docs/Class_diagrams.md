@@ -48,7 +48,7 @@ classDiagram
             +data_checkin : date
             +data_checkout : date
             +get_numero_diarias() int
-+           +calcular_total_estimado() float
+            +calcular_total_estimado() float
         }
 
         class Estadia {
